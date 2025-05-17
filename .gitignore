@@ -1,3 +1,6 @@
+# Mac OS junk
+.DS_Store
+
 # Prerequisites
 *.d
 
