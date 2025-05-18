@@ -1,7 +1,8 @@
 #include <gtest/gtest.h>
-#include "../src/core/html_element.h"
 #include "../src/core/yomitan_dictionary.h"
+#include "../src/core/html_element.h"
 #include "../src/utils/file_utils.h"
+#include <iostream>
 
 TEST(TEST_JSON, ReadJson)
 {
@@ -9,11 +10,10 @@ TEST(TEST_JSON, ReadJson)
 
     const std::string path {(std::filesystem::current_path().parent_path() / "test/test_index.json").string()};
     auto jsonContent = FileUtils::readFile(path);
+    DictionaryIndex index{};
 
     // read_json returns nullptr
-    EXPECT_FALSE(glz::read_json(index, *jsonContent)) << "jsonContent = " + *jsonContent;
-
-    const DictionaryIndex index{};
-    EXPECT_TRUE(index.revision == "kjt;2025-05-11") << "Revision: " + index.revision;
-    EXPECT_TRUE(index.format == 3);
+    EXPECT_FALSE(glz::read_json(index, *jsonContent));
+    EXPECT_TRUE(index.revision == "kjt;2025-05-11") << "\nActual revision: " + index.revision;
+    EXPECT_TRUE(index.format == 3) << "\nActual format: " + index.format;
 }

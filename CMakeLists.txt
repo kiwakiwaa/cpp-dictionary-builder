@@ -58,7 +58,7 @@ add_executable(yomitan_dictionary_tests
 target_include_directories(yomitan_dictionary_tests PRIVATE
         include
         ${glaze_SOURCE_DIR}/include
-        ${gtest_SOURCE_DIR/include}
+        ${gtest_SOURCE_DIR}/include
 )
 
 target_link_libraries(yomitan_dictionary_tests PRIVATE
