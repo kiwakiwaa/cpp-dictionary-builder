@@ -67,6 +67,37 @@ void testCreateDictionary()
     dictionary.exportDictionary("/Users/caoimhe/Downloads/test-dictionary");
 }
 
+void testCreateDictionaryWithConfig()
+{
+    YomitanDictionaryConfig dictionaryConfig {
+        "test-dictionary",
+        "bint",
+        "",
+        "",
+        "only me",
+        "",
+        3,
+        3,
+        true,
+    };
+
+    YomitanDictionary dictionary {dictionaryConfig};
+
+    auto entry = std::make_unique<DicEntry>("豊葦原瑞穂国", "とよあしはらのみずほのくに");
+    entry->addElement(createHtmlElement("div", "日本の別称"));
+
+    auto entry2 = std::make_unique<DicEntry>("麒麟", "きりん");
+    entry2->addElement(createHtmlElement("div", "🦒科の哺乳動物"));
+
+    auto entry3 = std::make_unique<DicEntry>("白河夜船", "しらかわよふね");
+    entry3->addElement(createHtmlElement("div", "知ったかぶり"));
+
+    dictionary.addEntry(entry);
+    dictionary.addEntry(entry2);
+    dictionary.addEntry(entry3);
+    dictionary.exportDictionary("/Users/caoimhe/Downloads/test-dictionary");
+}
+
 void runAllTests()
 {
     testCreateHtmlElement();
@@ -74,6 +105,7 @@ void runAllTests()
     testGetMethods();
     testDicEntry();
     testCreateDictionary();
+    testCreateDictionaryWithConfig();
 }
 
 int main()

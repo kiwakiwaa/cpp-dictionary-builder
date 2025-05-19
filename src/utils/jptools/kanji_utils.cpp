@@ -90,7 +90,14 @@ namespace KanjiUtils
         return converter.from_bytes(utf8Str.data(), utf8Str.data() + utf8Str.size());
     }
 
-    bool isKanjiString(std::string_view text)
+    //convert utf32 to utf8 characters
+    std::string utf32ToUtf8(const std::u32string& utf32Str)
+    {
+        std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
+        return converter.to_bytes(utf32Str);
+    }
+
+    bool isKanjiString(const std::string_view text)
     {
         if (text.empty())
             return false;

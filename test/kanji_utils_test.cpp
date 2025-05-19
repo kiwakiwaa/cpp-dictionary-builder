@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../src/utils/kanji_utils.h"
+#include "../src/utils/jptools/kanji_utils.h"
 
 TEST(KanjiUtilsTest, SingleCharacterTests)
 {

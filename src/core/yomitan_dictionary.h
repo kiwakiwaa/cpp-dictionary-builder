@@ -4,30 +4,110 @@
 
 #include "dicentry.h"
 
+struct YomitanDictionaryConfig
+{
+    // 必須
+    std::string title;
+
+    // 任意
+    std::string author;
+    std::string url;
+    std::string description;
+    std::string attribution;
+    std::string revision;
+    int format = 3;
+
+    // 辞書作成設定
+    size_t CHUNK_SIZE = 10'000;
+    bool formatPretty = false;
+    std::optional<std::filesystem::path> tempDir = std::nullopt;
+};
+
 class YomitanDictionary
 {
 public:
     friend glz::meta<DicEntry>;
 
+    /**
+     * Simple constructor to create a dictionary with just a title
+     * @param dictionaryName The title of the dictionary
+     */
     explicit YomitanDictionary(std::string_view dictionaryName);
 
+    /**
+     * Creates a new Yomitan dictionary with the given configuration
+     * @param config
+     */
+    explicit YomitanDictionary(const YomitanDictionaryConfig& config);
+
+    /**
+     * Destructor that ensures any remaining entries are flushed
+     */
+    ~YomitanDictionary();
+
+    /**
+     * Adds a new entry to the dictionary
+     * @param entry The dictionary entry to add
+     * @return True if the entry was added successfully
+     */
     bool addEntry(std::unique_ptr<DicEntry>& entry);
 
-    // TODO: move term banks to output path and export index
-    void exportDictionary(std::string_view outputPath) const;
+    /**
+     * Adds a new entry to the dictionary
+     * @param entry The dictionary to add (rvalue reference)
+     * @return True if the entry was added successfully
+     */
+    bool addEntry(std::unique_ptr<DicEntry>&& entry);
+
+
+    /**
+     * Exports the dictionary to the specified path
+     * @param outputPath Path where the dictionary should be exported
+     * @param moveTermBanks If true, term banks will be moved to the output path
+     * @return True if export was successful
+     */
+    bool exportDictionary(std::string_view outputPath, bool moveTermBanks = true);
+
+    /**
+     * Flushes any remaining entries to disk
+     * @return True if flush was successful
+     */
+    bool flush();
+
+    /**
+     * Gets the number of entries added to the dictionary
+     * @return Number of entries
+     */
+    size_t getEntryCount() const;
+
+    /**
+     * Gets the configuration of the dictionary
+     * @return Yomitan dictioanry configuration
+     */
+    const YomitanDictionaryConfig& getConfig() const;
+
 
 private:
-    std::filesystem::path tempDir {"/Users/caoimhe/Downloads/test-dictionary"};
-    const size_t CHUNK_SIZE = 10'000;
-    bool tempDirIsCleaned = false;
-
-    void flushChunkToDisk();
+    // Flushes the current chunk of entries to disk
+    bool flushChunkToDisk();
 
     // TODO: Fix handling for paths with spaces
-    void exportIndex(std::string_view outputPath) const;
+    // Creates and exports the index.json file
+    bool exportIndex(std::string_view outputPath) const;
 
+    // Move term banks to the output location
+    bool moveTermBanksToOutput(std::string_view outputPath) const;
+
+    // Creates the temporary dir if it doesn't exist
+    bool ensureTempDirExits() const;
+
+    static std::filesystem::path getDefaultTempDir();
+
+    YomitanDictionaryConfig config;
+    std::filesystem::path tempDir;
     std::vector<std::unique_ptr<DicEntry>> currentChunk;
-    std::string dictionaryName;
+    size_t totalEntries = 0;
+    bool tempDirIsCleaned = false;
 };
 
 // TODO: Change to string_view
