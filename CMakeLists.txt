@@ -31,6 +31,7 @@ add_library(yomitan_dictionary_builder_lib STATIC
         src/core/dicentry.cpp
         src/core/html_element.cpp
         src/core/yomitan_dictionary.cpp
+        src/utils/kanji_utils.cpp
 )
 
 target_include_directories(yomitan_dictionary_builder_lib PRIVATE
@@ -53,6 +54,7 @@ enable_testing()
 add_executable(yomitan_dictionary_tests
         test/html_element_test.cpp
         test/json_test.cpp
+        test/kanji_utils_test.cpp
 )
 
 target_include_directories(yomitan_dictionary_tests PRIVATE

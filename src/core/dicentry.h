@@ -58,5 +58,20 @@ struct glz::meta<DicEntryFormat>
 	);
 };
 
+template <>
+struct glz::meta<DicEntry>
+{
+	static constexpr auto value = glz::array(
+		&DicEntry::term,
+		&DicEntry::reading,
+		&DicEntry::infoTag,
+		&DicEntry::posTag,
+		&DicEntry::searchRank,
+		&DicEntry::content,
+		&DicEntry::sequenceNumber,
+		""
+	);
+};
+
 
 #endif

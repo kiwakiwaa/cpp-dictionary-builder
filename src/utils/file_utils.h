@@ -6,6 +6,7 @@
 #include <optional>
 #include <filesystem>
 #include <iostream>
+#include <regex>
 #include <glaze/glaze.hpp>
 
 namespace FileUtils
@@ -51,6 +52,38 @@ namespace FileUtils
         return result;
     }
 
+    inline int getNextTermBankNumber(const std::filesystem::path& folderPath)
+    {
+        if (!std::filesystem::is_directory(folderPath))
+            return 1;
+
+        std::vector<std::string> termBankFiles;
+        for (auto const& entry : std::filesystem::directory_iterator(folderPath))
+        {
+            if (entry.path().extension() == ".json")
+            {
+                if (auto filename = entry.path().filename().string(); filename.contains("term_bank"))
+                    termBankFiles.emplace_back(filename);
+            }
+        }
+        return static_cast<int>(termBankFiles.size()) + 1;
+    }
+
+    inline void cleanTermBankDirectory(const std::string& dirPath)
+    {
+        const std::regex termBankFilePattern("term_bank_\\d+\\.json");
+
+        for (const auto& file : std::filesystem::directory_iterator(dirPath))
+        {
+            if (std::filesystem::is_regular_file(file) && std::regex_match(file.path().filename().string(), termBankFilePattern))
+            {
+                if (std::error_code ec; !std::filesystem::remove(file.path(), ec))
+                {
+                    std::cerr << "Error removing file: " << file.path().string() << ec.message() << std::endl;
+                }
+            }
+        }
+    }
 
     inline std::string getUsernameFolder()
     {

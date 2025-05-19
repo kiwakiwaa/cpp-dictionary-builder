@@ -7,26 +7,26 @@
 class YomitanDictionary
 {
 public:
-    friend glz::meta<YomitanDictionary>;
+    friend glz::meta<DicEntry>;
 
     explicit YomitanDictionary(std::string_view dictionaryName);
 
-    // TODO: auto flush when chunk is full, use sizeof
     bool addEntry(std::unique_ptr<DicEntry>& entry);
 
     // TODO: move term banks to output path and export index
     void exportDictionary(std::string_view outputPath) const;
 
 private:
-    // TODO: Flush to temporary .json
-    void flushChunkToDisk() const;
+    std::filesystem::path tempDir {"/Users/caoimhe/Downloads/test-dictionary"};
+    const size_t CHUNK_SIZE = 10'000;
+    bool tempDirIsCleaned = false;
+
+    void flushChunkToDisk();
 
     // TODO: Fix handling for paths with spaces
     void exportIndex(std::string_view outputPath) const;
 
-    // TODO: dont keep all entries in memory, use chunks
-    std::vector<std::unique_ptr<DicEntry>> entries;
-    //std::vector<std::unique_ptr<DicEntry>> currentChunk;
+    std::vector<std::unique_ptr<DicEntry>> currentChunk;
     std::string dictionaryName;
 };
 
