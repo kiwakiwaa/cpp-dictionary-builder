@@ -28,7 +28,7 @@ void HTMLElement::setHref(const std::string& value)
     href = value;
 }
 
-void HTMLElement::setData(const std::map<std::string, std::string>& value)
+void HTMLElement::setData(const std::unordered_map<std::string, std::string>& value)
 {
     data = value;
 }
@@ -48,7 +48,7 @@ std::optional<std::string> HTMLElement::getHref() const
     return href;
 }
 
-std::optional<std::map<std::string, std::string>> HTMLElement::getData() const
+std::optional<std::unordered_map<std::string, std::string>> HTMLElement::getData() const
 {
     return data;
 }
@@ -70,7 +70,7 @@ std::shared_ptr<HTMLElement> createHtmlElement(
     const std::string&  tag,
     const std::optional<std::variant<HTMLElementContent, std::vector<HTMLElementContent>>>& content,
     const std::optional<std::string>& href,
-    const std::optional<std::map<std::string, std::string>>& data
+    const std::optional<std::unordered_map<std::string, std::string>>& data
 )
 {
     if (tag.empty())

@@ -4,6 +4,7 @@
 #include <string>
 #include <glaze/core/meta.hpp>
 
+#include "common.h"
 #include "html_element.h"
 
 using StructuredContent = std::map<std::string, std::variant<std::string, std::vector<std::shared_ptr<HTMLElement>>>>;
@@ -28,6 +29,17 @@ public:
 	explicit DicEntry(const std::string& term, const std::string& reading);
 
 	void addElement(const std::shared_ptr<HTMLElement>& element);
+
+	void setInfoTag(const std::string& infoTag);
+	void setPosTag(const std::string& posTag);
+	void setSearchRank(int searchRank);
+	void setSequenceNumber(long sequenceNumber);
+
+	std::string getInfoTag() const;
+	std::string getPosTag() const;
+	int getSearchRank() const;
+	long getSequenceNumber() const;
+
 	[[nodiscard]] DicEntryFormat toList() const;
 	void printContent() const;
 	

@@ -31,13 +31,17 @@ add_library(yomitan_dictionary_builder_lib STATIC
         src/core/dictionary/dicentry.cpp
         src/core/dictionary/html_element.cpp
         src/core/dictionary/yomitan_dictionary.cpp
+        src/core/xml_parser.cpp
+        src/core/parser.cpp
         src/utils/jptools/kanji_utils.cpp
         src/utils/jptools/kana_convert.cpp
         src/index/index_reader.cpp
+        lib/pugixml.cpp
 )
 
 target_include_directories(yomitan_dictionary_builder_lib PRIVATE
         include
+        lib
         ${glaze_SOURCE_DIR}/include
 )
 
@@ -63,6 +67,7 @@ add_executable(yomitan_dictionary_tests
 
 target_include_directories(yomitan_dictionary_tests PRIVATE
         include
+        lib
         ${glaze_SOURCE_DIR}/include
         ${gtest_SOURCE_DIR}/include
 )

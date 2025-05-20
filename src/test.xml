@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" hmhtml="5" lang="ja">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+        <meta name="viewport"
+              content="width=device-width, initial-scale = 1.0, user-scalable = yes, minimum-scale=0.333, maximum-scale=3.0" />
+        <link rel="stylesheet" href="KJT.css" media="all" />
+    </head>
+    <body>
+        <entry-index xmlns="" id="index">
+            <a href="00055-C001">親字</a>
+            <a href="00055-C002"> 旧字 異体字</a>
+            <a href="00055-C003">常用音訓</a>
+            <a href="00055-C004">筆順</a>
+            <a href="00055-C005">解字</a>
+            <a href="00055-C006">意味</a>
+            <a href="00055-C007"> 一</a>
+            <a href="00055-C00F"> 二</a>
+            <a href="00055-C016"> 国</a>
+            <a href="00055-C019">同訓異義</a>
+            <a href="00055-C01B">参考</a>
+            <a href="00055-C01C">名前</a>
+            <a href="00055-C020">逆熟語</a>
+            <a href="00055-C021">熟語</a>
+        </entry-index>
+        <OyajiHeadG xmlns="" id="00055-C001">
+            <OyajiHeadSubG id="00055-0001">
+                <table>
+                    <tr>
+                        <td class="親字部首内画数">
+                            <headword class="部首内画数">8</headword>
+                        </td>
+                        <td rowspan="2" class="親字">
+                            <headword class="親字"><OyajiP class="S red">【</OyajiP>乗<OyajiP
+                                    class="E red">】</OyajiP></headword>
+                        </td>
+                        <td rowspan="2" class="親字画数" href="index/KJT-04-この辞典のきまり.html#2-2-3"
+                            title="この辞典のきまり">
+                            <headword class="画数">（9）</headword>
+                        </td>
+                        <td rowspan="2" class="親字種別">
+                            <headword class="種別">
+                                <circle href="index/KJT-04-この辞典のきまり.html#2-2-4" title="この辞典のきまり"
+                                        class="種別">常</circle>
+                                <circle href="index/KJT-04-この辞典のきまり.html#2-2-4" title="この辞典のきまり"
+                                        class="種別">教</circle>
+                            </headword>
+                        </td>
+                        <td rowspan="2" class="親字JIS 親字コードTM">
+                            <Code href="index/KJT-04-この辞典のきまり.html#2-2-13" title="この辞典のきまり"
+                                  class="JIS">3072</Code>
+                        </td>
+                        <td rowspan="2" class="親字コードB" />
+                        <td rowspan="2" class="親字JIS16">
+                            <Code href="index/KJT-04-この辞典のきまり.html#2-2-13" title="この辞典のきまり"
+                                  class="JIS16">3E68</Code>
+                        </td>
+                        <td rowspan="2" class="親字コードB" />
+                        <td rowspan="2" class="親字Unicode">
+                            <Code href="index/KJT-04-この辞典のきまり.html#2-2-13" title="この辞典のきまり"
+                                  class="Unicode">4E57</Code>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="親字部首" href="index/KJT-04-この辞典のきまり.html#2-2-2" title="この辞典のきまり">
+                            <headword class="部首">丿</headword>
+                        </td>
+                    </tr>
+                </table>
+                <OyajiYomiSubG class="LM1">
+                    <headword class="字音字韻">ジョウ<circle href="index/KJT-04-この辞典のきまり.html#2-2-9-3"
+                                                             title="この辞典のきまり" class="BM">呉</circle></headword>
+                    <JionJiinSP> </JionJiinSP>
+                    <headword class="字音字韻">ショウ<circle href="index/KJT-04-この辞典のきまり.html#2-2-9-3"
+                                                             title="この辞典のきまり" class="BM">漢</circle></headword>
+                    <JionJiinSP2> </JionJiinSP2>
+                    <headword class="字音字韻"><rect class="bold FM">一</rect><img class="字韻"
+                                                                                   src="img/字韻025.png" href="index/KJT-04-この辞典のきまり.html#2-2-10"
+                                                                                   title="この辞典のきまり" /><sp2> </sp2>chéng</headword>
+                    <JionJiinSP> </JionJiinSP>
+                    <headword class="字音字韻"><rect class="bold FM">二</rect><img class="字韻"
+                                                                                   src="img/字韻084.png" href="index/KJT-04-この辞典のきまり.html#2-2-10"
+                                                                                   title="この辞典のきまり" /><sp2> </sp2>shèng</headword>
+                </OyajiYomiSubG>
+            </OyajiHeadSubG>
+            <KyuujiItaijiG id="00055-C002">
+                <OyajiHeadSubG id="00055-0002" class="旧字">
+                    <table>
+                        <tr>
+                            <td class="親字部首内画数" href="index/KJT-04-この辞典のきまり.html#2-2-2"
+                                title="この辞典のきまり">
+                                <headword class="部首内画数">9</headword>
+                            </td>
+                            <td rowspan="2" class="親字">
+                                <headword class="旧字"><OyajiP class="S">【</OyajiP>乘<OyajiP class="E">
+                                    】</OyajiP></headword>
+                            </td>
+                            <td rowspan="2" class="親字種別">
+                                <headword class="種別">
+                                    <circle href="index/KJT-04-この辞典のきまり.html#2-2-4" title="この辞典のきまり">
+                                        人</circle>
+                                </headword>
+                            </td>
+                            <td rowspan="2" class="親字JIS 親字コードTM">
+                                <Code href="index/KJT-04-この辞典のきまり.html#2-2-13" title="この辞典のきまり"
+                                      class="JIS">4811</Code>
+                            </td>
+                            <td rowspan="2" class="旧字異体字コードB" />
+                            <td rowspan="2" class="親字JIS16">
+                                <Code href="index/KJT-04-この辞典のきまり.html#2-2-13" title="この辞典のきまり"
+                                      class="JIS16">502B</Code>
+                            </td>
+                            <td rowspan="2" class="旧字異体字コードB" />
+                            <td rowspan="2" class="親字Unicode">
+                                <Code href="index/KJT-04-この辞典のきまり.html#2-2-13" title="この辞典のきまり"
+                                      class="Unicode">4E58</Code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="親字部首" href="index/KJT-04-この辞典のきまり.html#2-2-2"
+                                title="この辞典のきまり">
+                                <headword class="部首">丿</headword>
+                            </td>
+                        </tr>
+                    </table>
+                </OyajiHeadSubG>
+                <OyajiHeadSubG id="00055-0003" class="異体字">
+                    <table>
+                        <tr>
+                            <td rowspan="2" class="異体字M">
+                                <rect class="異体字M">異体</rect>
+                            </td>
+                            <td rowspan="2" class="親字">
+                                <headword class="異体字">
+                                    <OyajiP class="S">【</OyajiP>
+                                    <img class="gaiji" src="img/U06909.svg" alt="椉" />
+                                    <OyajiP class="E">】</OyajiP>
+                                </headword>
+                            </td>
+                            <td rowspan="2" class="親字異体字ラベル" href="index/KJT-04-この辞典のきまり.html#2-3-2"
+                                title="この辞典のきまり">
+                                <headword class="異体字ラベル">本字</headword>
+                            </td>
+                            <td rowspan="2" class="親字JIS 親字コードTM">
+                                <Code href="index/KJT-04-この辞典のきまり.html#2-2-13" title="この辞典のきまり"
+                                      class="JIS">─</Code>
+                            </td>
+                            <td rowspan="2" class="旧字異体字コードB" />
+                            <td rowspan="2" class="親字JIS16">
+                                <Code href="index/KJT-04-この辞典のきまり.html#2-2-13" title="この辞典のきまり"
+                                      class="JIS16">─</Code>
+                            </td>
+                            <td rowspan="2" class="旧字異体字コードB" />
+                            <td rowspan="2" class="親字Unicode">
+                                <Code href="index/KJT-04-この辞典のきまり.html#2-2-13" title="この辞典のきまり"
+                                      class="Unicode">6909</Code>
+                            </td>
+                        </tr>
+                        <tr />
+                    </table>
+                </OyajiHeadSubG>
+            </KyuujiItaijiG>
+        </OyajiHeadG>
+        <OyajiHead2G xmlns="">
+            <DivG id="00055-C003"><rect class="red Logo-FM"
+                                        href="index/KJT-04-この辞典のきまり.html#2-4-常用音訓" title="この辞典のきまり">常用音訓</rect><Bold>ジョウ</Bold>　<Bold>
+                の</Bold>る・<Bold>の</Bold>せる</DivG>
+            <DivG>
+                <img class="筆順" src="img/HJ3E68.png" />
+            </DivG>
+            <DivG id="00055-C005">
+                <MG>
+                    <meaning><rect class="Logo-FM" href="index/KJT-04-この辞典のきまり.html#2-6-解字"
+                                   title="この辞典のきまり">解字</rect><KaijiG>
+                        <KaijiTitle>甲</KaijiTitle>
+                        <img class="解字" src="img/SJ3E681.png" />
+                    </KaijiG><KaijiG>
+                        <KaijiTitle>金</KaijiTitle>
+                        <img class="解字" src="img/SJ3E682.png" />
+                    </KaijiG><KaijiG>
+                        <KaijiTitle>篆</KaijiTitle>
+                        <img class="解字" src="img/SJ3E683.png" />
+                    </KaijiG>
+                        会意。木（<img class="gaiji" src="img/SJ3E684.png" />）の上に人が立っているさま（<img
+                                class="gaiji" src="img/SJ3E685.png" />。<img class="gaiji"
+                                                                            src="img/M46678.svg" />・<img class="gaiji" src="img/M46679.svg" />
+                        は変化した形）で、上に「のる」意を表す。転じて、のりものの意に用いる。常用漢字は俗字による。</meaning>
+                </MG>
+            </DivG>
+        </OyajiHead2G>
+        <MainG xmlns="">
+            <DivG id="00055-C006">
+                <MG>
+                    <meaning>
+                        <rect href="index/KJT-04-この辞典のきまり.html#2-7-意味" title="この辞典のきまり" class="red">
+                            意味</rect>
+                    </meaning>
+                </MG>
+                <MG id="00055-C007">
+                    <meaning>
+                        <rect class="bold Logo-FM">一</rect>
+                    </meaning>
+                    <MG id="00055-C008">
+                        <meaning id="00055-F001"><Bc class="Logo-FM">❶</Bc><Bold>の</Bold><Hyphen>
+                            <span style="glyph:9769;">-</span>
+                        </Hyphen>
+                            る。<Bold>の</Bold><Hyphen>
+                                <span style="glyph:9769;">-</span>
+                            </Hyphen>
+                            せる（<Hyphen>
+                                <span style="glyph:9769;">-</span>
+                            </Hyphen>
+                            す）。<RefM>
+                                <span style="glyph:12201;">↔</span>
+                            </RefM><a
+                                    href="08013">降</a>。</meaning>
+                        <MG id="00055-C009">
+                            <meaning id="00055-F002"><WcKana class="Logo-FM">㋐</WcKana>
+                                乗り物にのる。またがりのる。「騎乗」</meaning>
+                        </MG>
+                        <MG id="00055-C00A">
+                            <meaning id="00055-F003"><WcKana class="Logo-FM">㋑</WcKana><Bold>のぼ</Bold>
+                                る（上・升・登）。「<span id="00055-5001">
+                                    <kanbun>乗<kkaeri>二</kkaeri>高台<kkaeri>一</kkaeri><mlg>コウダイにのぼる</mlg></kanbun>
+                                </span>
+                                」<Source>〈列子・黄帝〉</Source></meaning>
+                        </MG>
+                    </MG>
+                    <MG id="00055-C00B">
+                        <meaning id="00055-F004"><Bc class="Logo-FM">❷</Bc><Bold>ジョウ</Bold>ず。つけこむ。「<kanbun>
+                            乗<kkaeri>レ</kkaeri>勢<mlg>いきおいにジョウず</mlg></kanbun>」</meaning>
+                    </MG>
+                    <MG id="00055-C00C">
+                        <meaning id="00055-F005"><Bc class="Logo-FM">❸</Bc>かつ（勝）。しのぐ。「<kanbun>乗<kkaeri>
+                            レ</kkaeri>人<mlg>ひとにかつ</mlg></kanbun>」</meaning>
+                    </MG>
+                    <MG id="00055-C00D">
+                        <meaning id="00055-F006"><Bc class="Logo-FM">❹</Bc>はかる（計）。「<span
+                                id="00055-5002">
+                            <kanbun>乗<kkaeri>二</kkaeri>其事<kkaeri>一</kkaeri><mlg>そのことをはかる</mlg></kanbun>
+                        </span>
+                            」<Source>〈周礼・藁人〉</Source></meaning>
+                    </MG>
+                    <MG id="00055-C00E">
+                        <meaning id="00055-F007"><Bc class="Logo-FM">❺</Bc><slabel
+                                href="index/KJT-05-この辞典で使った主な略号・記号.html#S数"
+                                title="この辞典で使った主な略号・記号" class="FM">〘数〙</slabel>かける。かけ算。<RefM>
+                            <span style="glyph:12201;">↔</span>
+                        </RefM><a
+                                href="08014">除</a>。「乗法」</meaning>
+                    </MG>
+                </MG>
+                <MG id="00055-C00F">
+                    <meaning>
+                        <rect class="bold Logo-FM">二</rect>
+                    </meaning>
+                    <MG id="00055-C010">
+                        <meaning id="00055-F008"><Bc class="Logo-FM">❶</Bc>四頭だての馬車。ひいて、車・兵力を数える助数詞。「<span
+                                id="00055-5003">千乗万騎西南行<mlg>センジョウバンキセイナンにゆく</mlg></span>」<Source>
+                            〈白居易・長恨歌〉</Source></meaning>
+                    </MG>
+                    <MG id="00055-C011">
+                        <meaning id="00055-F009"><Bc class="Logo-FM">❷</Bc>馬・矢など四つ一そろいの称。「乗矢<mlg>ジョウ
+                            シ</mlg>」</meaning>
+                    </MG>
+                    <MG id="00055-C012">
+                        <meaning id="00055-F00A"><Bc class="Logo-FM">❸</Bc>のりもの。</meaning>
+                    </MG>
+                    <MG id="00055-C013">
+                        <meaning id="00055-F00B"><Bc class="Logo-FM">❹</Bc>歴史・記録。もと春秋時代、晋<mlg>シン</mlg>
+                            の歴史書を指した。「史乗」</meaning>
+                    </MG>
+                    <MG id="00055-C014">
+                        <meaning id="00055-F00C"><Bc class="Logo-FM">❺</Bc><slabel
+                                href="index/KJT-05-この辞典で使った主な略号・記号.html#S仏"
+                                title="この辞典で使った主な略号・記号" class="FM">〘仏〙</slabel>
+                            人々を悟りの境地に運ぶ方便。「小乗・大乗」</meaning>
+                    </MG>
+                    <MG id="00055-C015">
+                        <meaning id="00055-F00D"><Bc class="Logo-FM">❻</Bc>ふたつ。一対。「雁<mlg>ガン</mlg>一乗」</meaning>
+                    </MG>
+                </MG>
+                <DivG id="00055-C016">
+                    <MG>
+                        <meaning><rect href="index/KJT-04-この辞典のきまり.html#2-7-6" title="この辞典のきまり"
+                                       class="Logo-FM">国</rect><Bold>の</Bold><Hyphen>
+                            <span style="glyph:9769;">-</span>
+                        </Hyphen>
+                            る。<Bold>の</Bold><Hyphen>
+                                <span style="glyph:9769;">-</span>
+                            </Hyphen>
+                            せる（<Hyphen>
+                                <span style="glyph:9769;">-</span>
+                            </Hyphen>
+                            す）。</meaning>
+                    </MG>
+                    <MG id="00055-C017">
+                        <meaning id="00055-F00F"><WcKana class="Logo-FM">㋐</WcKana>だまされる。だます。</meaning>
+                    </MG>
+                    <MG id="00055-C018">
+                        <meaning id="00055-F010"><WcKana class="Logo-FM">㋑</WcKana>調子にのる。その気になる。</meaning>
+                    </MG>
+                </DivG>
+            </DivG>
+            <DivG id="00055-C019">
+                <ColumnG id="00055-C01A" class="同訓異義">
+                    <ColumnTitleG><rect class="Logo-FM" href="index/KJT-04-この辞典のきまり.html#2-10-同訓異義"
+                                        title="この辞典のきまり">同訓異義</rect>『<Bold>のる</Bold>』の同訓</ColumnTitleG>
+                    <ColumnC class="同訓異義">
+                        <MG>
+                            <meaning>〔乗<mlg>ジョウ</mlg>〕物の上にのる。広く乗り物にのる。「乗船」情勢につけ入る。「<kanbun>乗<kkaeri>
+                                レ</kkaeri>勝<mlg>かちに ジョウず</mlg></kanbun>」</meaning>
+                            <meaning>〔騎<mlg>キ</mlg>〕馬にまたがる。「騎馬」</meaning>
+                            <meaning>〔<JyouyouGaiM>△</JyouyouGaiM>駕<mlg>ガ</mlg>〕馬車をしたてる。馬車で行く。「来駕」</meaning>
+                        </MG>
+                    </ColumnC>
+                </ColumnG>
+            </DivG>
+            <DivG id="00055-C01B">
+                <rect class="Logo-FM" href="index/KJT-04-この辞典のきまり.html#2-11-参考" title="この辞典のきまり">参考</rect>
+                <MG class="inline">「乗<mlg>ジョウ</mlg>」を音符とする字＝<a href="00601">剰</a>（＝あまる）</MG>
+            </DivG>
+            <DivG id="00055-C01C"><rect class="red Logo-FM"
+                                        href="index/KJT-04-この辞典のきまり.html#2-12-名前" title="この辞典のきまり">名前</rect><NamaeC
+                    id="00055-C01D">あき</NamaeC>・<NamaeC id="00055-C01E">しげ</NamaeC>・<NamaeC
+                    id="00055-C01F">のり</NamaeC></DivG>
+            <DivG id="00055-C020"><GyakuJyukugoM href="index/KJT-04-この辞典のきまり.html#2-14-逆熟語"
+                                                 title="この辞典のきまり">
+                <img class="gaiji" src="img/GyakuJyukugoM.svg" />
+            </GyakuJyukugoM><sp2> </sp2><a href="00006-802A">下乗</a>・自乗・<a href="01704-8036">小乗</a>・<a
+                    href="00008-802F">上乗</a>・<a href="00723-8023">千乗</a>・<a href="01396-8090">大乗</a>
+                ・<a href="02913-801B">日乗</a>・<a href="08030-8004">陪乗</a>・<a href="00010-8027">万乗</a>
+                ・<a href="00240-8010">便乗</a></DivG>
+            <SubItemG id="00055-C021">
+                <SubItem id="00055-8001">
+                    <SubItemC>
+                        <SubItemHeadG>
+                            <headword class="熟語"><SubItemP class="S">【</SubItemP>乗雲<SubItemP
+                                    class="E">】</SubItemP></headword>
+                            <yomi>ジョウウン</yomi>
+                        </SubItemHeadG>
+                        <MG id="00055-C022" class="inline">
+                            <span id="00055-F011"><Wc class="Logo-FM">①</Wc>雲に乗る。</span>
+                        </MG>
+                        <MG id="00055-C023" class="inline">
+                            <span id="00055-F012"><Wc class="Logo-FM">②</Wc>高位にのぼる。</span>
+                        </MG>
+                    </SubItemC>
+                </SubItem>
+                <SubItem id="00055-8002">
+                    <SubItemC>
+                        <SubItemHeadG>
+                            <headword class="熟語"><SubItemP class="S">【</SubItemP>乗鶴<SubItemP
+                                    class="E">】</SubItemP></headword>
+                            <yomi>ジョウカク</yomi>
+                        </SubItemHeadG>
+                        <MG id="00055-C024" class="inline">
+                            <span id="00055-F013"><Wc class="Logo-FM">①</Wc>鶴<mlg>つる</mlg>に乗って天に上る。</span>
+                        </MG>
+                        <MG id="00055-C025" class="inline">
+                            <span id="00055-F014"><Wc class="Logo-FM">②</Wc>仙人になる。</span>
+                        </MG>
+                    </SubItemC>
+                </SubItem>
+                <SubItem id="00055-8003">
+                    <SubItemC>
+                        <SubItemHeadG>
+                            <headword class="熟語"><SubItemP class="S">【</SubItemP>乗隙<SubItemP
+                                    class="E">】</SubItemP></headword>
+                            <yomi>ジョウゲキ</yomi>
+                            <YomiMDot>・</YomiMDot>
+                            <yomi>すきに ジョウず</yomi>
+                        </SubItemHeadG>
+                        <MG class="inline">
+                            <span id="00055-F015">すきにつけいる。乗間。</span>
+                        </MG>
+                    </SubItemC>
+                </SubItem>
+                <SubItem id="00055-8004">
+                    <SubItemC>
+                        <SubItemHeadG>
+                            <headword class="熟語"><SubItemP class="S">【</SubItemP>乗軒<SubItemP
+                                    class="E">】</SubItemP></headword>
+                            <yomi>ジョウケン</yomi>
+                        </SubItemHeadG>
+                        <MG class="inline">
+                            <span id="00055-F016">大夫<mlg>タイフ</mlg>の車に乗る。大夫となること。軒は、大夫の車の意。</span>
+                        </MG>
+                    </SubItemC>
+                </SubItem>
+                <SubItem id="00055-8005">
+                    <SubItemC>
+                        <SubItemHeadG>
+                            <headword class="熟語"><SubItemP class="S">【</SubItemP>乗矢<SubItemP
+                                    class="E">】</SubItemP></headword>
+                            <yomi>ジョウ シ</yomi>
+                        </SubItemHeadG>
+                        <MG class="inline">
+                            <span id="00055-F017">一そろいの矢。矢は、四本を一そろいとする。<Source>〈孟子・離婁〉</Source></span>
+                        </MG>
+                    </SubItemC>
+                </SubItem>
+                <SubItem id="00055-8006">
+                    <SubItemC>
+                        <SubItemHeadG>
+                            <headword class="熟語"><SubItemP class="S">【</SubItemP>乗志<SubItemP
+                                    class="E">】</SubItemP></headword>
+                            <yomi>ジョウ シ</yomi>
+                        </SubItemHeadG>
+                        <MG class="inline">
+                            <span id="00055-F018">歴史。記録。史乗。</span>
+                        </MG>
+                    </SubItemC>
+                </SubItem>
+                <SubItem id="00055-8007">
+                    <SubItemC>
+                        <SubItemHeadG>
+                            <headword class="熟語"><SubItemP class="S">【</SubItemP>乗日<SubItemP
+                                    class="E">】</SubItemP></headword>
+                            <yomi>ジョウジツ</yomi>
+                        </SubItemHeadG>
+                        <MG class="inline">
+                            <span id="00055-F019">一日中。太陽を車にたとえていう。</span>
+                        </MG>
+                    </SubItemC>
+                </SubItem>
+                <SubItem id="00055-8008">
+                    <SubItemC>
+                        <SubItemHeadG>
+                            <headword class="熟語"><SubItemP class="S">【</SubItemP>乗車<JyouyouGaiM>△</JyouyouGaiM>
+                                之会（會）<SubItemP class="E">】</SubItemP></headword>
+                            <yomi>ジョウシャの カイ（クヮイ）</yomi>
+                        </SubItemHeadG>
+                        <MG class="inline">
+                            <span id="00055-F01A">諸侯の平和的な会合。兵車ではなく平時の車を用いることから。衣裳之会<mlg>イショウの カイ</mlg>
+                                。</span>
+                        </MG>
+                    </SubItemC>
+                </SubItem>
+                <SubItem id="00055-8009">
+                    <SubItemC>
+                        <SubItemHeadG>
+                            <headword class="熟語"><SubItemP class="S">【</SubItemP>乗除<SubItemP
+                                    class="E">】</SubItemP></headword>
+                            <yomi>ジョウ ジョ（ヂョ）</yomi>
+                        </SubItemHeadG>
+                        <MG id="00055-C026" class="inline">
+                            <span id="00055-F01B"><Wc class="Logo-FM">①</Wc>掛け算と割り算。</span>
+                        </MG>
+                        <MG id="00055-C027" class="inline">
+                            <span id="00055-F01C"><Wc class="Logo-FM">②</Wc>功罪が差し引きされてなんにもないことになる。</span>
+                        </MG>
+                    </SubItemC>
+                </SubItem>
+                <SubItem id="00055-800A">
+                    <SubItemC>
+                        <SubItemHeadG>
+                            <headword class="熟語"><SubItemP class="S">【</SubItemP>乗田<SubItemP
+                                    class="E">】</SubItemP></headword>
+                            <yomi>ジョウデン</yomi>
+                        </SubItemHeadG>
+                        <MG class="inline">
+                            <span id="00055-F01D">春秋時代、魯<mlg>ロ</mlg>（今の山東省）で家畜を飼育した官。</span>
+                        </MG>
+                    </SubItemC>
+                </SubItem>
+                <SubItem id="00055-800B">
+                    <SubItemC>
+                        <SubItemHeadG>
+                            <headword class="熟語"><SubItemP class="S">【</SubItemP>乗伝（傳）<SubItemP
+                                    class="E">】</SubItemP></headword>
+                            <yomi>ジョウデン</yomi>
+                        </SubItemHeadG>
+                        <MG class="inline">
+                            <span id="00055-F01E">宿場ごとに置く馬に乗る。また、その馬。</span>
+                        </MG>
+                    </SubItemC>
+                </SubItem>
+                <SubItem id="00055-800C">
+                    <SubItemC>
+                        <SubItemHeadG>
+                            <headword class="熟語"><SubItemP class="S">【</SubItemP>乗法<SubItemP
+                                    class="E">】</SubItemP></headword>
+                            <yomi>ジョウ ホウ（ハフ）</yomi>
+                        </SubItemHeadG>
+                        <MG class="inline">
+                            <span id="00055-F01F">かけ算。<RefM>
+                                <span style="glyph:12201;">↔</span>
+                            </RefM>
+                                除法</span>
+                        </MG>
+                    </SubItemC>
+                </SubItem>
+                <SubItem id="00055-800D">
+                    <SubItemC>
+                        <SubItemHeadG>
+                            <headword class="熟語"><SubItemP class="S">【</SubItemP>乗<JyouyouGaiM>△</JyouyouGaiM>
+                                輿<SubItemP class="E">】</SubItemP></headword>
+                            <yomi>ジョウ ヨ</yomi>
+                        </SubItemHeadG>
+                        <MG id="00055-C028" class="inline">
+                            <span id="00055-F020"><Wc class="Logo-FM">①</Wc>天子の乗り物。</span>
+                        </MG>
+                        <MG id="00055-C029" class="inline">
+                            <span id="00055-F021"><Wc class="Logo-FM">②</Wc>天子を間接的にいう敬称。</span>
+                        </MG>
+                    </SubItemC>
+                </SubItem>
+                <SubItem id="00055-800E">
+                    <SubItemC>
+                        <SubItemHeadG>
+                            <headword class="熟語"><SubItemP class="S">【</SubItemP>乗竜（龍）<SubItemP
+                                    class="E">】</SubItemP></headword>
+                            <yomi>ジョウリョウ・ ジョウリュウ</yomi>
+                        </SubItemHeadG>
+                        <MG id="00055-C02A" class="inline">
+                            <span id="00055-F022"><Wc class="Logo-FM">①</Wc>竜に乗る。転じて、天に上る。</span>
+                        </MG>
+                        <MG id="00055-C02B" class="inline">
+                            <span id="00055-F023"><Wc class="Logo-FM">②</Wc>四ひきの竜。</span>
+                        </MG>
+                        <MG id="00055-C02C" class="inline">
+                            <span id="00055-F024"><Wc class="Logo-FM">③</Wc>竜のようなよい婿を迎える。後漢の桓焉<mlg>
+                                カンエン</mlg>の娘がよい婿を得た故事による。<Source>〈楚国先賢伝〉</Source></span>
+                        </MG>
+                    </SubItemC>
+                </SubItem>
+                <SubItem id="00055-800F">
+                    <SubItemC>
+                        <SubItemHeadG>
+                            <headword class="熟語"><SubItemP class="S">【</SubItemP>乗<JyouyouGaiM>△</JyouyouGaiM>
+                                輦<SubItemP class="E">】</SubItemP></headword>
+                            <yomi>ジョウレン</yomi>
+                        </SubItemHeadG>
+                        <MG class="inline">
+                            <span id="00055-F025">車に乗ること。また、乗り物。輦は、人の引く車の意。</span>
+                        </MG>
+                    </SubItemC>
+                </SubItem>
+            </SubItemG>
+        </MainG>
+    </body>
+</html>

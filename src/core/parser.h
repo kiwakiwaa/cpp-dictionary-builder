@@ -8,25 +8,29 @@ class Parser : public XMLParser
 {
 public:
     explicit Parser(const YomitanDictionary& config, int batchSize = 250);
-    ~Parser();
+
+    //temporary simple constructor
+    explicit Parser(std::string_view dictionaryName);
+
+    ~Parser() = default;
 
     std::vector<std::string> normalizeKeys(const std::vector<std::string>& keys);
     std::pair<std::string, std::string> getPartOfSpeechTags(std::string_view term);
 
     bool parseEntry(
-        std::string_view term,
-        std::string_view reading,
-        /* root element here */
-        std::optional<std::string_view> infoTag,
-        std::optional<std::string_view> posTag,
-        std::optional<int> searchRank,
-        std::optional<long> sequenceNumber,
-        std::optional<bool> ignoreExpressions
+        const std::string& term,
+        const std::string& reading,
+        const pugi::xml_document& doc,
+        const std::optional<std::string>& infoTag = std::nullopt,
+        const std::optional<std::string>& posTag = std::nullopt,
+        std::optional<int> searchRank = std::nullopt,
+        std::optional<long> sequenceNumber = std::nullopt,
+        std::optional<bool> ignoreExpressions = std::nullopt
     );
 
     bool processBatch(const std::pair<std::string, std::string>& batch);
 
-    bool exportDictionary();
+    bool exportDictionary(const std::string_view outputPath);
 
 protected:
     bool processFile(std::string_view filename, std::string_view xml);

@@ -19,7 +19,7 @@ struct YomitanDictionaryConfig
 
     // 辞書作成設定
     size_t CHUNK_SIZE = 10'000;
-    bool formatPretty = false;
+    bool formatPretty = true;
     std::optional<std::filesystem::path> tempDir = std::nullopt;
 };
 

@@ -1,38 +1,42 @@
 #ifndef XML_PARSER_H
 #define XML_PARSER_H
 
+#include "dictionary/common.h"
 #include "dictionary/html_element.h"
 #include "dictionary/yomitan_dictionary.h"
-#include "../../libs/pugixml.hpp" // TODO how to use thissss???
+#include "../../lib/pugixml.hpp"
 
 #include <string>
 #include <unordered_set>
 #include <vector>
+#include <sstream>
+
+const std::unordered_set<std::string> ignoredAttributes = {
+    "rel", "http-equiv", "xmlns", "hmhtml", "content", "media", "alt", "rowspan"
+};
 
 class XMLParser
 {
 public:
 
-    explicit XMLParser(const YomitanDictionaryConfig& config);
+    //explicit XMLParser(const YomitanDictionaryConfig& config);
 
-    ~XMLParser();
+    //simple xml parser constructor TODO remove later
+    explicit XMLParser() = default;
 
-    const std::string& getTargetTag(std::string_view tagName/*, parent = ?*/, int recursionDepth = 0);
-    const std::vector<std::string>& getClassList(/*elementTag*/);
-    const std::unordered_map<std::string, std::string>& getAttributeData(/*elementTag*/);
+    ~XMLParser() = default;
 
-    HTMLElement& handleLinkElement(/*elementTag, list of elements, class list, data attributes*/);
-    HTMLElement& handleImageElement(/*elementTag, list of elements, class list, data attributes*/);
-    std::optional<HTMLElement&> convertElementToYomitan(/*elementTag, */ bool ignoreExpressions = false);
+    //const std::string& getTargetTag(std::string_view tagName/*, parent = ?*/, int recursionDepth = 0);
+    static std::vector<std::string> getClassList(const pugi::xml_node& node);
+
+    static std::unordered_map<std::string, std::string> getAttributeData(const pugi::xml_node& node);
+
+    //HTMLElement& handleLinkElement(/*elementTag, list of elements, class list, data attributes*/);
+    //HTMLElement& handleImageElement(/*elementTag, list of elements, class list, data attributes*/);
+    static std::shared_ptr<HTMLElement> convertElementToYomitan(const pugi::xml_node& node, bool ignoreExpressions = false);
 
 private:
-    std::vector<HTMLElement>& processChildElements(/*elementTag, list of elements, class list, data attributes*/);
-
     YomitanDictionaryConfig config;
-    constexpr std::unordered_set<std::string> yomitanSupportedTags {
-        "br", "ruby", "rt", "rp", "table", "thead", "tbody", "tfoot",
-        "tr", "td", "th", "span", "div", "ol", "ul", "li", "details", "summary"
-    };
 };
 
 

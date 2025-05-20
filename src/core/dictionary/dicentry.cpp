@@ -24,11 +24,51 @@ void DicEntry::addElement(const std::shared_ptr<HTMLElement> &element)
 
 void DicEntry::validateElement(const std::shared_ptr<HTMLElement> &element)
 {
-    if (!yomitanAllowedElements.contains(element->getTag()))
+    if (!Yomitan::allowedElements.contains(element->getTag()))
         throw std::invalid_argument("Unsupported HTML element: " + element->getTag());
 
-    if (element->getTag().contains("href") && !yomitanAllowedHrefElements.contains(element->getTag()))
+    if (element->getTag().contains("href") && !Yomitan::allowedHrefElements.contains(element->getTag()))
         throw std::invalid_argument("The 'href' attribute is not allowed in the '" + element->getTag() + "' element");
+}
+
+void DicEntry::setInfoTag(const std::string &infoTag)
+{
+    this->infoTag = infoTag;
+}
+
+void DicEntry::setPosTag(const std::string &posTag)
+{
+    this->posTag = posTag;
+}
+
+void DicEntry::setSearchRank(const int searchRank)
+{
+    this->searchRank = searchRank;
+}
+
+void DicEntry::setSequenceNumber(const long sequenceNumber)
+{
+    this->sequenceNumber = sequenceNumber;
+}
+
+std::string DicEntry::getInfoTag() const
+{
+    return infoTag;
+}
+
+std::string DicEntry::getPosTag() const
+{
+    return posTag;
+}
+
+int DicEntry::getSearchRank() const
+{
+    return searchRank;
+}
+
+long DicEntry::getSequenceNumber() const
+{
+    return sequenceNumber;
 }
 
 DicEntryFormat DicEntry::toList() const
