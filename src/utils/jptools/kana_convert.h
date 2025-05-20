@@ -11,14 +11,14 @@ namespace KanaConvert
      * @param text The text to convert
      * @return Text converted to katakana
      */
-    std::string hiraganaToKatakana(const std::string_view text);
+    std::string hiraganaToKatakana(std::string_view text);
 
     /**
      * Converts all katakana characters to hiragana
      * @param text The text to convert
      * @return Text converted to hiragana
      */
-    std::string katakanaToHiragana(const std::string_view text);
+    std::string katakanaToHiragana(std::string_view text);
 }
 
 #endif

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "../src/core/yomitan_dictionary.h"
-#include "../src/core/html_element.h"
+#include "../src/core/dictionary/yomitan_dictionary.h"
+#include "../src/core/dictionary/html_element.h"
 #include "../src/utils/file_utils.h"
 #include <iostream>
 

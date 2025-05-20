@@ -1,6 +1,6 @@
-#include "core/html_element.h"
-#include "core/dicentry.h"
-#include "core/yomitan_dictionary.h"
+#include "core/dictionary/html_element.h"
+#include "core/dictionary/dicentry.h"
+#include "core/dictionary/yomitan_dictionary.h"
 
 #include <iostream>
 
@@ -69,7 +69,7 @@ void testCreateDictionary()
 
 void testCreateDictionaryWithConfig()
 {
-    YomitanDictionaryConfig dictionaryConfig {
+    const YomitanDictionaryConfig dictionaryConfig {
         "test-dictionary",
         "bint",
         "",

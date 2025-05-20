@@ -1,0 +1,5 @@
+#ifndef DICTIONARY_CONFIG_H
+#define DICTIONARY_CONFIG_H
+
+
+#endif

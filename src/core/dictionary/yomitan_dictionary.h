@@ -78,13 +78,13 @@ public:
      * Gets the number of entries added to the dictionary
      * @return Number of entries
      */
-    size_t getEntryCount() const;
+    [[nodiscard]] size_t getEntryCount() const;
 
     /**
      * Gets the configuration of the dictionary
      * @return Yomitan dictioanry configuration
      */
-    const YomitanDictionaryConfig& getConfig() const;
+    [[nodiscard]] const YomitanDictionaryConfig& getConfig() const;
 
 
 private:
@@ -93,13 +93,13 @@ private:
 
     // TODO: Fix handling for paths with spaces
     // Creates and exports the index.json file
-    bool exportIndex(std::string_view outputPath) const;
+    [[nodiscard]] bool exportIndex(std::string_view outputPath) const;
 
     // Move term banks to the output location
-    bool moveTermBanksToOutput(std::string_view outputPath) const;
+    [[nodiscard]] bool moveTermBanksToOutput(std::string_view outputPath) const;
 
     // Creates the temporary dir if it doesn't exist
-    bool ensureTempDirExits() const;
+    [[nodiscard]] bool ensureTempDirExits() const;
 
     static std::filesystem::path getDefaultTempDir();
 

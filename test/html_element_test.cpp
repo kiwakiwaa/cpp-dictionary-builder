@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "../src/core/html_element.h"
-#include "../src/core/dicentry.h"
+#include "../src/core/dictionary/html_element.h"
+#include "../src/core/dictionary/dicentry.h"
 
 TEST(HTMLElementTest, CreateElement)
 {
