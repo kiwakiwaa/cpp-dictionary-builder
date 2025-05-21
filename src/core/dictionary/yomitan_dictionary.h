@@ -91,7 +91,6 @@ private:
     // Flushes the current chunk of entries to disk
     bool flushChunkToDisk();
 
-    // TODO: Fix handling for paths with spaces
     // Creates and exports the index.json file
     [[nodiscard]] bool exportIndex(std::string_view outputPath) const;
 
@@ -110,7 +109,6 @@ private:
     bool tempDirIsCleaned = false;
 };
 
-// TODO: Change to string_view
 struct DictionaryIndex
 {
     std::string title;

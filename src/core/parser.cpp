@@ -1,11 +1,26 @@
 #include "parser.h"
+
+#include <chrono>
+
 #include "dictionary/dicentry.h"
 
 #include <iostream>
 
-Parser::Parser(const std::string_view dictionaryName) : XMLParser(), dictionary(YomitanDictionary(dictionaryName))
+Parser::Parser(std::unique_ptr<YomitanDictionary> dictionary, const ParserConfig& parserConfig): config(parserConfig)
 {
+    fileIterator = std::make_unique<FileUtils::FileIterator>(config.dictionaryPath.value());
+    this->batchSize = config.parsingBatchSize;
+    this->dictionary = std::move(dictionary);
 }
+
+Parser::Parser(std::string_view dictionaryName) : config(ParserConfig{"", ""})
+{
+    dictionary = std::make_unique<YomitanDictionary>(dictionaryName);
+}
+
+
+Parser::~Parser() = default;
+
 
 bool Parser::parseEntry(
     const std::string& term,
@@ -15,7 +30,7 @@ bool Parser::parseEntry(
     const std::optional<std::string>& posTag,
     const std::optional<int> searchRank,
     const std::optional<long> sequenceNumber,
-    const std::optional<bool> ignoreExpressions)
+    const std::optional<bool> ignoreExpressions) const
 {
     auto entry = std::make_unique<DicEntry>(term, reading);
 
@@ -48,8 +63,8 @@ bool Parser::parseEntry(
     const auto xmlTree = convertElementToYomitan(root);
     if (xmlTree)
     {
-        std::cout << "successfully parsed xml" << std::endl;
-        xmlTree->print();
+        //std::cout << "successfully parsed xml" << std::endl;
+        //xmlTree->print();
     }
     else
     {
@@ -58,7 +73,7 @@ bool Parser::parseEntry(
     }
 
     entry->addElement(xmlTree);
-    if (!dictionary.addEntry(entry))
+    if (!dictionary->addEntry(entry))
     {
         std::cerr << "Failed to add entry '" << term << "' to dictionary\n" << std::endl;
         return false;
@@ -67,17 +82,100 @@ bool Parser::parseEntry(
     return true;
 }
 
-bool Parser::exportDictionary(const std::string_view outputPath)
+
+int Parser::parse()
 {
-    if (dictionary.exportDictionary(outputPath))
+    if (!this->fileIterator)
+    {
+        std::cerr << "No dictionary path set." << std::endl;
+    }
+
+    const size_t totalFiles = fileIterator->getTotalFilesCount();
+    std::cout << "Processing " << totalFiles << " files..." << std::endl;
+
+    const auto startTime = std::chrono::high_resolution_clock::now();
+    entriesProcessed = 0;
+    filesProcessed = 0;
+
+
+    while (fileIterator->hasMore())
+    {
+        auto batch = fileIterator->getNextBatch(batchSize);
+        this->entriesProcessed += processBatch(batch);
+
+        // Progress
+        const int progress = static_cast<int>((static_cast<double>(filesProcessed) / totalFiles) * 100);
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        const auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(currentTime - startTime).count();
+
+        const double filesPerSecond = filesProcessed > 0 ? static_cast<double>(filesProcessed) / elapsed : 0;
+
+        std::cout << "\nProgress: " << progress << "% | "
+                    << filesProcessed << "/" << totalFiles << " files | "
+                    << filesPerSecond << "files/s | "
+                    << entriesProcessed << " entries | "
+                    << "Elapsed: " << elapsed << "s | "
+                    << std::flush;
+    }
+
+    std::cout << "Parsed " << entriesProcessed << " entries." << std::endl;
+
+    return entriesProcessed;
+}
+
+
+bool Parser::exportDictionary(const std::string_view outputPath) const
+{
+    if (dictionary->exportDictionary(outputPath))
     {
         std::cout << "successfully exported dictionary to " << outputPath << std::endl;
         return true;
     }
-    else
+
+    std::cerr << "Failed to export dictionary to " << outputPath << std::endl;
+    return false;
+}
+
+
+bool Parser::processFile(const std::filesystem::path& filePath)
+{
+    pugi::xml_document doc;
+    if (const pugi::xml_parse_result result = doc.load_file(filePath.c_str()); !result)
     {
-        std::cerr << "Failed to export dictionary to " << outputPath << std::endl;
+        std::cerr << "Failed to read xml: " << filePath.filename().string() << std::endl;
         return false;
     }
+
+    const bool success = parseEntry(
+        "",
+        "",
+        doc
+    );
+
+    if (success)
+    {
+        entriesProcessed++;
+    }
+
+    return success;
 }
+
+
+
+int Parser::processBatch(const std::vector<std::filesystem::path> &filePaths)
+{
+    int batchEntriesProcessed = 0;
+
+    for (const auto& filePath : filePaths)
+    {
+        if (processFile(filePath))
+        {
+            batchEntriesProcessed++;
+            filesProcessed++;
+        }
+    }
+
+    return batchEntriesProcessed;
+}
+
 

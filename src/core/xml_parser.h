@@ -24,7 +24,7 @@ public:
     //simple xml parser constructor TODO remove later
     explicit XMLParser() = default;
 
-    ~XMLParser() = default;
+    virtual ~XMLParser() = default;
 
     //const std::string& getTargetTag(std::string_view tagName/*, parent = ?*/, int recursionDepth = 0);
     static std::vector<std::string> getClassList(const pugi::xml_node& node);
