@@ -5,7 +5,7 @@
 #include <glaze/core/meta.hpp>
 
 #include "common.h"
-#include "html_element.h"
+#include "yomitan_dictionary_builder/core/dictionary/html_element.h"
 
 using StructuredContent = std::map<std::string, std::variant<std::string, std::vector<std::shared_ptr<HTMLElement>>>>;
 

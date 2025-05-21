@@ -1,15 +1,12 @@
 #ifndef XML_PARSER_H
 #define XML_PARSER_H
 
-#include "dictionary/common.h"
-#include "dictionary/html_element.h"
-#include "dictionary/yomitan_dictionary.h"
-#include "../../lib/pugixml.hpp"
+#include "yomitan_dictionary_builder/core/dictionary/yomitan_dictionary.h"
+#include "pugixml.h"
 
 #include <string>
 #include <unordered_set>
 #include <vector>
-#include <sstream>
 
 const std::unordered_set<std::string> ignoredAttributes = {
     "rel", "http-equiv", "xmlns", "hmhtml", "content", "media", "alt", "rowspan"

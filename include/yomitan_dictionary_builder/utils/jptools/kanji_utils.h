@@ -5,6 +5,7 @@
 #include <string>
 #include <string_view>
 #include <array>
+#include <optional>
 
 namespace KanjiUtils
 {
@@ -50,6 +51,21 @@ namespace KanjiUtils
 
     std::u32string utf8ToUtf32(std::string_view utf8Str);
     std::string utf32ToUtf8(const std::u32string& utf32Str);
+
+    std::string extractKanjiStem(const std::string& kanjiEntry);
+
+    int longestCommonPrefix(const std::string& str1, const std::string& str2);
+
+    int longestCommonSuffix(const std::string& str1, const std::string& str2);
+
+    bool isPlausibleReading(const std::string& kana, const std::string& kanji);
+
+    // :skull:
+    using ResultPair = std::pair<std::optional<std::string>, std::optional<std::string>>;
+
+    std::vector<ResultPair> matchKanaWithKanji(const std::vector<std::string>& entries, int recursionLevel = 0);
+
+
 }
 
 

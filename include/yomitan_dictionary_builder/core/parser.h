@@ -1,15 +1,16 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "dictionary/yomitan_dictionary.h"
-#include "../config/parser_config.h"
-#include "xml_parser.h"
-#include "../utils/file_utils.h"
+#include "yomitan_dictionary_builder/core/dictionary/yomitan_dictionary.h"
+#include "yomitan_dictionary_builder/config/parser_config.h"
+#include "yomitan_dictionary_builder/core/xml_parser.h"
+#include "yomitan_dictionary_builder/index/index_reader.h"
+#include "yomitan_dictionary_builder/utils/file_utils.h"
 
 class Parser : public XMLParser
 {
 public:
-    explicit Parser(std::unique_ptr<YomitanDictionary> dictionary, const ParserConfig& parserConfig);
+    explicit Parser(std::unique_ptr<YomitanDictionary> dictionary, ParserConfig  parserConfig);
 
     ~Parser() override;
 
@@ -75,12 +76,13 @@ protected:
      */
     std::pair<std::string, std::string> getPartOfSpeechTags(std::string_view term);
 
+    std::unique_ptr<IndexReader> indexReader;
+
 private:
 
     int processBatch(const std::vector<std::filesystem::path>& filePaths);
 
     std::unique_ptr<FileUtils::FileIterator> fileIterator;
-
     std::unique_ptr<YomitanDictionary> dictionary;
 
     ParserConfig config;

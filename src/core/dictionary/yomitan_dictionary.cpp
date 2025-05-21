@@ -1,7 +1,7 @@
-#include "yomitan_dictionary.h"
-#include <iostream>
+#include "yomitan_dictionary_builder/core/dictionary/yomitan_dictionary.h"
+#include "yomitan_dictionary_builder/utils/file_utils.h"
 
-#include "../../utils/file_utils.h"
+#include <iostream>
 
 YomitanDictionary::YomitanDictionary(const std::string_view dictionaryName)
     : YomitanDictionary(YomitanDictionaryConfig{.title = std::string(dictionaryName)})

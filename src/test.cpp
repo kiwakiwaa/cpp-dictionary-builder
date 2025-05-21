@@ -1,8 +1,7 @@
-#include "core/dictionary/html_element.h"
-#include "core/dictionary/dicentry.h"
-#include "core/dictionary/yomitan_dictionary.h"
-#include "core/xml_parser.h"
-#include "core/parser.h"
+#include "yomitan_dictionary_builder/core/dictionary/yomitan_dictionary.h"
+#include "yomitan_dictionary_builder/core/xml_parser.h"
+#include "yomitan_dictionary_builder/core/parser.h"
+#include "yomitan_dictionary_builder/utils/jptools/kanji_utils.h"
 
 #include <iostream>
 
@@ -164,6 +163,23 @@ void testParserClass()
     }
 }
 
+void testMatchEntryKeys()
+{
+    std::cout << "\n ------ Test Match Entry Keys ------" << std::endl;
+    const std::vector<std::string> tests = {"かなしば", "かなしび", "かなしびよ", "かなしぶ", "かなしぶる", "かなしぶれ", "かなしべ", "哀しば", "哀しびよ", "哀しび", "哀しぶる", "哀しぶれ", "哀しぶ", "悲しぶ", "愛しぶ", "哀しべ"};
+
+    auto results = KanjiUtils::matchKanaWithKanji(tests);
+
+    for (const auto&[kanji, kana] : results)
+    {
+        const auto kanjiValue = kanji.has_value() ? kanji.value() : "";
+        const auto kanaValue = kana.has_value() ? kana.value() : "";
+
+        std::cout << "Kanji：" << kanjiValue
+                    << "    Kana：" << kanaValue << std::endl;
+    }
+}
+
 void runAllTests()
 {
     testCreateHtmlElement();
@@ -174,6 +190,7 @@ void runAllTests()
     testCreateDictionaryWithConfig();
     testXMLParse();
     testParserClass();
+    testMatchEntryKeys();
 }
 
 int main()

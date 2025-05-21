@@ -2,7 +2,7 @@
 #ifndef YOMITAN_DICTIONARY_H
 #define YOMITAN_DICTIONARY_H
 
-#include "dicentry.h"
+#include "yomitan_dictionary_builder/core/dictionary/dicentry.h"
 
 struct YomitanDictionaryConfig
 {

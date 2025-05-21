@@ -8,6 +8,7 @@
 #include <iostream>
 #include <regex>
 #include <glaze/glaze.hpp>
+#include "pugixml.h"
 
 namespace FileUtils
 {
@@ -101,6 +102,23 @@ namespace FileUtils
             std::cerr << e.what() << '\n';
             return std::nullopt;
         }
+    }
+
+    inline bool loadXMLFile(pugi::xml_document& doc, const std::filesystem::path& filePath, std::string )
+    {
+        if (!std::filesystem::exists(filePath))
+        {
+            std::cerr << "File '" << filePath.string() << "' does not exist!" << std::endl;
+            return false;
+        }
+
+        if (const pugi::xml_parse_result result = doc.load_file(filePath.c_str()); !result)
+        {
+            std::cerr << "Failed to read xml: " << filePath.filename().string() << std::endl;
+            return false;
+        }
+
+        return true;
     }
 
     template<typename T>

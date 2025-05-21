@@ -1,16 +1,16 @@
-#include "parser.h"
+#include "yomitan_dictionary_builder/core/parser.h"
+#include "yomitan_dictionary_builder/core/dictionary/dicentry.h"
 
 #include <chrono>
-
-#include "dictionary/dicentry.h"
-
 #include <iostream>
+#include <utility>
 
-Parser::Parser(std::unique_ptr<YomitanDictionary> dictionary, const ParserConfig& parserConfig): config(parserConfig)
+Parser::Parser(std::unique_ptr<YomitanDictionary> dictionary, ParserConfig  parserConfig): config(std::move(parserConfig))
 {
-    fileIterator = std::make_unique<FileUtils::FileIterator>(config.dictionaryPath.value());
+    this->fileIterator = std::make_unique<FileUtils::FileIterator>(config.dictionaryPath.value());
     this->batchSize = config.parsingBatchSize;
     this->dictionary = std::move(dictionary);
+    this->indexReader = config.indexPath.has_value() ? std::make_unique<IndexReader>(config.indexPath.value().string()) : nullptr;
 }
 
 Parser::Parser(std::string_view dictionaryName) : config(ParserConfig{"", ""})

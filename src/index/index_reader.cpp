@@ -1,8 +1,12 @@
-#include "index_reader.h"
-#include "../utils/jptools/kana_convert.h"
+#include "yomitan_dictionary_builder/index/index_reader.h"
+#include "yomitan_dictionary_builder/utils/jptools/kana_convert.h"
 
 IndexReader::IndexReader(const std::string_view indexPath) : indexPath(indexPath)
 {
+    if (!loadIndex())
+    {
+        std::cerr << "Failed to load index at: " << indexPath << std::endl;
+    }
 }
 
 const std::vector<std::string>& IndexReader::getKeysForFile(const std::string_view filename)

@@ -1,8 +1,7 @@
 #ifndef KANA_CONVERT_H
 #define KANA_CONVERT_H
 
-#include <unordered_map>
-#include "kanji_utils.h"
+#include "yomitan_dictionary_builder/utils/jptools/kanji_utils.h"
 
 namespace KanaConvert
 {

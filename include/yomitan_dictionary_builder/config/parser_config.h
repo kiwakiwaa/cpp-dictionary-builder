@@ -1,7 +1,7 @@
 #ifndef PARSER_CONFIG_H
 #define PARSER_CONFIG_H
 
-#include "../core/dictionary/yomitan_dictionary.h"
+#include "yomitan_dictionary_builder/core/dictionary/yomitan_dictionary.h"
 
 class LinkHandlingStrategy;
 class ImageHandlingStrategy;

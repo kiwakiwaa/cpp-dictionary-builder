@@ -36,12 +36,14 @@ add_library(yomitan_dictionary_builder_lib STATIC
         src/utils/jptools/kanji_utils.cpp
         src/utils/jptools/kana_convert.cpp
         src/index/index_reader.cpp
-        #src/main.cpp
+        src/main.cpp
+        src/test.cpp
         lib/pugixml.cpp
 )
 
-target_include_directories(yomitan_dictionary_builder_lib PRIVATE
-        include
+target_include_directories(yomitan_dictionary_builder_lib PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
         lib
         ${glaze_SOURCE_DIR}/include
 )

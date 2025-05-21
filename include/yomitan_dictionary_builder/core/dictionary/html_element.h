@@ -1,7 +1,7 @@
 #ifndef HTML_ELEMENT_H
 #define HTML_ELEMENT_H
 
-#include "common.h"
+#include "yomitan_dictionary_builder/core/dictionary/common.h"
 #include <glaze/glaze.hpp>
 #include <string>
 #include <string_view>

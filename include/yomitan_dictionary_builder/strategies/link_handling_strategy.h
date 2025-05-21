@@ -1,7 +1,7 @@
 #ifndef LINK_HANDLING_STRATEGY_H
 #define LINK_HANDLING_STRATEGY_H
 
-#include "../core/dictionary/html_element.h"
+#include "yomitan_dictionary_builder/core/dictionary/html_element.h"
 
 class LinkHandlingStrategy
 {

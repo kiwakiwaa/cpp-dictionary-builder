@@ -1,4 +1,5 @@
-#include "html_element.h"
+#include "yomitan_dictionary_builder/core/dictionary/html_element.h"
+
 #include <iostream>
 
 HTMLElement::HTMLElement(const std::string&  tag) : tag(tag) {}

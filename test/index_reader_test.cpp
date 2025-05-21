@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../src/index/index_reader.h"
+#include "yomitan_dictionary_builder/index/index_reader.h"
 
 #include <numeric>
 

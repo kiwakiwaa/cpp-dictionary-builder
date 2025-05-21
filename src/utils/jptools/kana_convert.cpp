@@ -1,4 +1,6 @@
-#include "kana_convert.h"
+#include "yomitan_dictionary_builder/utils/jptools/kana_convert.h"
+
+#include <unordered_map>
 
 namespace KanaConvert
 {

@@ -1,5 +1,5 @@
-#include "xml_parser.h"
-
+#include "yomitan_dictionary_builder/core/xml_parser.h"
+#include <sstream>
 
 std::unordered_map<std::string, std::string> XMLParser::getAttributeData(const pugi::xml_node &node)
 {

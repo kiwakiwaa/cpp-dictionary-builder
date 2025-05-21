@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "../src/core/dictionary/yomitan_dictionary.h"
 #include "../src/core/dictionary/html_element.h"
-#include "../src/utils/file_utils.h"
+#include "../include/yomitan_dictionary_builder/utils/file_utils.h"
 #include <iostream>
 
 TEST(TEST_JSON, ReadJson)

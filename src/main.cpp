@@ -1,6 +1,6 @@
-#include "core/dictionary/yomitan_dictionary.h"
-#include "core/parser.h"
-#include "config/parser_config.h"
+#include "yomitan_dictionary_builder/core/dictionary/yomitan_dictionary.h"
+#include "yomitan_dictionary_builder/core/parser.h"
+#include "yomitan_dictionary_builder/config/parser_config.h"
 #include <iostream>
 #include <filesystem>
 

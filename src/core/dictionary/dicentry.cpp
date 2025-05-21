@@ -1,4 +1,4 @@
-#include "dicentry.h"
+#include "yomitan_dictionary_builder/core/dictionary/dicentry.h"
 
 #include <iostream>
 
