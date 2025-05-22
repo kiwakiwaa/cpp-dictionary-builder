@@ -99,38 +99,6 @@ void testCreateDictionaryWithConfig()
     dictionary.exportDictionary("/Users/caoimhe/Downloads/test-dictionary");
 }
 
-void testXMLParse()
-{
-    std::cout << "\n ------ Test XML Parser ------" << std::endl;
-
-    const std::wstring path {L"/Users/caoimhe/Documents/日本語/Dictionary Conversion/yomitan-dictionary-builder/src/test.xml"};
-    pugi::xml_document doc;
-
-    if (const pugi::xml_parse_result result = doc.load_file(path.c_str()); !result)
-    {
-        std::cerr << "Failed to read xml: " << std::endl;
-        throw std::runtime_error {"Error reading file"};
-        //dieeeee
-    }
-
-    const pugi::xml_node root = doc.document_element();
-    if (!root)
-    {
-        std::cerr << "XML has no root" << std::endl;
-    }
-
-    XMLParser parser{};
-    if (const auto xmlTree = parser.convertElementToYomitan(root); xmlTree)
-    {
-        std::cout << "successfully parsed xml" << std::endl;
-        xmlTree->print();
-    }
-    else
-    {
-        std::cerr << "Failed to parse xml" << std::endl;
-    }
-}
-
 void testParserClass()
 {
     std::cout << "\n ------ Test Parser Class ------" << std::endl;
@@ -188,7 +156,6 @@ void runAllTests()
     testDicEntry();
     testCreateDictionary();
     testCreateDictionaryWithConfig();
-    testXMLParse();
     testParserClass();
     testMatchEntryKeys();
 }

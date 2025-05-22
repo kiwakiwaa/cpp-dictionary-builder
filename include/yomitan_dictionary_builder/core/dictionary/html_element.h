@@ -30,6 +30,7 @@ public:
 
     void addContent(const std::string& textContent);
     void addContent(const std::shared_ptr<HTMLElement>& element);
+    void setTag(const std::string& value);
     void setHref(const std::string& value);
     void setData(const std::unordered_map<std::string, std::string>& value);
 

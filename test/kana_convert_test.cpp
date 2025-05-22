@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "../include/yomitan_dictionary_builder/utils/jptools/kana_convert.h"
+#include "yomitan_dictionary_builder/utils/jptools/kana_convert.h"
 
 TEST(KanaConvertTest, HiraganaToKatakanaTest)
 {

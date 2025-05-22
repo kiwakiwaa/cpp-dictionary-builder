@@ -26,6 +26,7 @@ struct ParserConfig
     std::optional<std::set<std::string>> ignoredElements;
     std::optional<std::string> expressionElement;
     bool parseAllLinks = false;
+    bool showProgress = false;
 
     int parsingBatchSize = 250;
 
@@ -112,6 +113,12 @@ public:
     ParserConfigBuilder& withParseAllLinks(const bool parseAllLinks)
     {
         parserConfig.parseAllLinks = parseAllLinks;
+        return *this;
+    }
+
+    ParserConfigBuilder& withShowProgress(const bool showProgress)
+    {
+        parserConfig.showProgress = showProgress;
         return *this;
     }
 

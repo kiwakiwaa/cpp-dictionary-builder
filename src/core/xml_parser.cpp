@@ -1,76 +1,200 @@
 #include "yomitan_dictionary_builder/core/xml_parser.h"
 #include <sstream>
 
-std::unordered_map<std::string, std::string> XMLParser::getAttributeData(const pugi::xml_node &node)
+
+XMLParser::XMLParser(const ParserConfig& config) : config(config)
 {
-    std::unordered_map<std::string, std::string> dataMap;
-
-    for (pugi::xml_attribute attr = node.first_attribute(); attr; attr = attr.next_attribute())
+    if (config.showProgress)
     {
-        std::string attrName = attr.name() ? attr.name() : "";
-        const std::string attrValue = attr.value() ? attr.value() : "";
+        pbar = std::make_unique<indicators::ProgressBar>(
+            indicators::option::BarWidth{40},
+            indicators::option::Start{"【"},
+            indicators::option::Fill{"█"},
+            indicators::option::Lead{"█"},
+            indicators::option::Remainder{"-"},
+            indicators::option::End{"】"},
+            indicators::option::ForegroundColor{indicators::Color::magenta},
+            indicators::option::ShowPercentage{true},
+            indicators::option::ShowElapsedTime{true},
+            indicators::option::FontStyles{std::vector{indicators::FontStyle::bold}}
+        );
+    }
 
-        if (ignoredAttributes.contains(attrName) || attrName == "class")
-            continue;
+    if (!this->config.tagMappingPath.has_value())
+    {
+        return;
+    }
 
-        if (attrValue.contains(".css") || attrValue == "viewport")
-            continue;
+    const auto json = FileUtils::readFile(this->config.tagMappingPath.value());
+    if (!json.has_value()) {
+        return;
+    }
 
-        if (!attrName.empty())
-        {
-            // need to replace dash w underscore bc yomitan is -_-
-            std::string processedName = attrName;
-            for (char& c : processedName)
-            {
-                if (c == '-') c = '_';
-            }
-            dataMap[processedName] = attrValue;
+    try {
+        if (const auto ec = glz::read_json(this->tagMapping, json.value())) {
+            std::cerr << "Error reading tag map: " << glz::format_error(ec, json.value()) << std::endl;
         }
     }
-    return dataMap;
+    catch (const std::exception& e) {
+        std::cerr << "Error reading tag map: " << e.what() << std::endl;
+    }
 }
 
-std::vector<std::string> XMLParser::getClassList(const pugi::xml_node &node)
+// NOLINTNEXTLINE(misc-no-recursion)
+std::string XMLParser::getTargetTag(
+    const std::string& tagName,
+    const std::optional<std::vector<std::string>>& classList,
+    const std::optional<pugi::xml_node>& parent,
+    const std::optional<int> recursionDepth) const
 {
-    std::vector<std::string> classList;
+    thread_local std::string selectorBuffer;
 
-    if (pugi::xml_attribute classAttribute = node.attribute("class"))
+    // Look for nested rules
+    if (parent.has_value())
     {
-        if (std::string classValue = classAttribute.value() ? classAttribute.value() : ""; !classValue.empty())
+        const auto& parentNode = parent.value();
+        const char* parentName = parentNode.name();
+
+        // Try parent.class + tag
+        if (const auto parentClassList = getClassList(parent.value()); parentClassList.has_value())
         {
+            for (const auto& parentClass : parentClassList.value())
+            {
+                selectorBuffer.clear();
+                selectorBuffer.reserve(strlen(parentName) + parentClass.size() + tagName.size() + 2);
+                selectorBuffer.append(parentName);
+                selectorBuffer.append(".");
+                selectorBuffer.append(parentClass);
+                selectorBuffer.append(" ");
+                selectorBuffer.append(tagName);
+
+                if (const auto it = this->tagMapping.find(selectorBuffer); it != this->tagMapping.end())
+                {
+                    return it->second;
+                }
+            }
+        }
+
+
+        selectorBuffer.clear();
+
+        selectorBuffer.reserve(strlen(parent->name()) + tagName.size() + 1);
+        selectorBuffer.append(parentName);
+        selectorBuffer.append(" ");
+        selectorBuffer.append(tagName);
+
+        if (const auto it = this->tagMapping.find(selectorBuffer); it != this->tagMapping.end())
+        {
+            return it->second;
+        }
+
+        // Recurse up the ancestor chain if no match
+        if (recursionDepth.has_value() && recursionDepth.value() < 5 && parent->parent() != nullptr)
+        {
+            auto targetTag = getTargetTag(
+                tagName,
+                classList,
+                parent->parent(),
+                recursionDepth.value() + 1
+                );
+            return targetTag;
+        }
+    }
+
+    // Try tag.class (no parent involvement)
+    if (classList.has_value())
+    {
+        for (const auto& className : classList.value())
+        {
+            selectorBuffer.clear();
+            selectorBuffer.reserve(tagName.size() + className.size() + 1);
+            selectorBuffer.append(tagName);
+            selectorBuffer.append(".");
+            selectorBuffer.append(className);
+
+            if (const auto it = this->tagMapping.find(selectorBuffer); it != this->tagMapping.end())
+            {
+                return it->second;
+            }
+        }
+    }
+
+    // Fall back to regular tag mapping or default
+    if (const auto it = this->tagMapping.find(tagName); it != this->tagMapping.end())
+    {
+        return it->second;
+    }
+
+    return "span";
+}
+
+
+std::optional<std::vector<std::string>> XMLParser::getClassList(const pugi::xml_node &node)
+{
+    if (const pugi::xml_attribute classAttribute = node.attribute("class"))
+    {
+        if (const std::string classValue = classAttribute.value() ? classAttribute.value() : ""; !classValue.empty())
+        {
+            std::vector<std::string> classList;
             std::istringstream iss(classValue);
             std::string className;
             while (iss >> className)
             {
-                std::string processedClassName = className;
-                for (char& c : processedClassName)
-                {
-                    if (c == '-') c = '_';
-                }
-                classList.emplace_back(processedClassName);
+                std::ranges::replace(className, '-', '_');
             }
+            classList.emplace_back(className);
+            return classList;
         }
     }
-    return classList;
+    return std::nullopt;
 }
 
 
-std::shared_ptr<HTMLElement> XMLParser::convertElementToYomitan(const pugi::xml_node& node, bool ignoreExpressions)
+std::unordered_map<std::string, std::string> XMLParser::getAttributeData(const pugi::xml_node &node)
+{
+    std::unordered_map<std::string, std::string> dataMap;
+
+    thread_local std::string processedName;
+
+    for (pugi::xml_attribute attr = node.first_attribute(); attr; attr = attr.next_attribute())
+    {
+        const char* attrNamePtr = attr.name();
+        const char* attrValuePtr = attr.value();
+
+        if (!attrNamePtr || !attrValuePtr)
+            continue;
+
+        std::string_view attrName(attrNamePtr);
+        std::string_view attrValue(attrValuePtr);
+
+        if (attrName.empty() || attrValue == "class")
+            continue;
+
+        if (attrValue.find(".css") != std::string_view::npos || attrValue == "viewport")
+            continue;
+
+
+        processedName.assign(attrName);
+
+        std::ranges::replace(processedName, '-', '_');
+
+        dataMap.emplace(std::move(processedName), std::string{attrValue});
+
+    }
+    return dataMap;
+}
+
+// NOLINTNEXTLINE(misc-no-recursion)
+std::shared_ptr<HTMLElement> XMLParser::convertElementToYomitan(const pugi::xml_node& node, bool ignoreExpressions) const
 {
     if (node == nullptr)
         return {nullptr};
 
-    std::string tagName = node.name() ? node.name() : "";
-    std::shared_ptr<HTMLElement> element;
+    auto dataMap = getAttributeData(node);
+    const auto classList = getClassList(node);
+    const auto tagName = getTargetTag(node.name(), classList, node.parent());
 
-    if (tagName.empty())
-    {
-        if (std::string text = node.value(); !text.empty())
-        {
-            return std::make_shared<HTMLElement>("span", text);
-        }
-        return nullptr;
-    }
+    std::shared_ptr<HTMLElement> element;
 
     if (Yomitan::allowedElements.contains(tagName))
     {
@@ -79,15 +203,15 @@ std::shared_ptr<HTMLElement> XMLParser::convertElementToYomitan(const pugi::xml_
     else
     {
         element = std::make_shared<HTMLElement>("span");
-        // Store original tag as attribute
         element->setData({{tagName, ""}});
     }
 
-    auto dataMap = getAttributeData(node);
-    auto classList = getClassList(node);
-    for (const auto& className : classList)
+    if (classList.has_value())
     {
-        dataMap[className] = "";
+        for (const auto& className : classList.value())
+        {
+            dataMap[className] = "";
+        }
     }
 
     if (!dataMap.empty())

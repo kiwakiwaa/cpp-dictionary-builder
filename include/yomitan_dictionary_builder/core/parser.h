@@ -10,7 +10,7 @@
 class Parser : public XMLParser
 {
 public:
-    explicit Parser(std::unique_ptr<YomitanDictionary> dictionary, ParserConfig  parserConfig);
+    explicit Parser(std::unique_ptr<YomitanDictionary> dictionary, const ParserConfig& parserConfig);
 
     ~Parser() override;
 
@@ -85,7 +85,6 @@ private:
     std::unique_ptr<FileUtils::FileIterator> fileIterator;
     std::unique_ptr<YomitanDictionary> dictionary;
 
-    ParserConfig config;
     size_t batchSize{1};
 
     int entriesProcessed{0};

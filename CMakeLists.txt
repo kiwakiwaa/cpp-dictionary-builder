@@ -54,9 +54,7 @@ add_executable(yomitan_dictionary_builder src/main.cpp)
 target_link_libraries(yomitan_dictionary_builder PRIVATE
         yomitan_dictionary_builder_lib
         glaze::glaze
-        gtest
 )
-
 
 # Tests executable
 enable_testing()
@@ -68,17 +66,10 @@ add_executable(yomitan_dictionary_tests
         test/index_reader_test.cpp
 )
 
-target_include_directories(yomitan_dictionary_tests PRIVATE
-        include
-        lib
-        ${glaze_SOURCE_DIR}/include
-        ${gtest_SOURCE_DIR}/include
-)
-
 target_link_libraries(yomitan_dictionary_tests PRIVATE
         yomitan_dictionary_builder_lib
         GTest::gtest_main
 )
 
 include(GoogleTest)
-gtest_discover_tests(yomitan_dictionary_tests)
+gtest_discover_tests(yomitan_dictionary_tests DISCOVERY_TIMEOUT 300)

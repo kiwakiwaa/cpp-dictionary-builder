@@ -86,6 +86,12 @@ public:
      */
     [[nodiscard]] const YomitanDictionaryConfig& getConfig() const;
 
+    /**
+     * Gets the title name of the dictionary
+     * @return The name of the dictionary
+     */
+    [[nodiscard]] const std::string& getTitle() const;
+
 
 private:
     // Flushes the current chunk of entries to disk

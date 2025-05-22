@@ -24,6 +24,12 @@ void HTMLElement::addContent(const std::shared_ptr<HTMLElement>& element)
         content = std::vector<HTMLElementContent> {element };
 }
 
+void HTMLElement::setTag(const std::string& value)
+{
+    tag = value;
+}
+
+
 void HTMLElement::setHref(const std::string& value)
 {
     href = value;

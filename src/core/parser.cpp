@@ -5,7 +5,7 @@
 #include <iostream>
 #include <utility>
 
-Parser::Parser(std::unique_ptr<YomitanDictionary> dictionary, ParserConfig  parserConfig): config(std::move(parserConfig))
+Parser::Parser(std::unique_ptr<YomitanDictionary> dictionary, const ParserConfig& parserConfig) : XMLParser(parserConfig)
 {
     this->fileIterator = std::make_unique<FileUtils::FileIterator>(config.dictionaryPath.value());
     this->batchSize = config.parsingBatchSize;
@@ -13,7 +13,7 @@ Parser::Parser(std::unique_ptr<YomitanDictionary> dictionary, ParserConfig  pars
     this->indexReader = config.indexPath.has_value() ? std::make_unique<IndexReader>(config.indexPath.value().string()) : nullptr;
 }
 
-Parser::Parser(std::string_view dictionaryName) : config(ParserConfig{"", ""})
+Parser::Parser(std::string_view dictionaryName) : XMLParser(ParserConfig{"", ""})
 {
     dictionary = std::make_unique<YomitanDictionary>(dictionaryName);
 }
@@ -61,12 +61,7 @@ bool Parser::parseEntry(
     }
 
     const auto xmlTree = convertElementToYomitan(root);
-    if (xmlTree)
-    {
-        //std::cout << "successfully parsed xml" << std::endl;
-        //xmlTree->print();
-    }
-    else
+    if (!xmlTree)
     {
         std::cerr << "Failed to parse xml" << std::endl;
         return false;
@@ -91,7 +86,9 @@ int Parser::parse()
     }
 
     const size_t totalFiles = fileIterator->getTotalFilesCount();
-    std::cout << "Processing " << totalFiles << " files..." << std::endl;
+
+    pbar->set_option(indicators::option::PrefixText{std::to_string(totalFiles) + std::string{"のファイルを処理中"}});
+    pbar->set_progress(0.0);
 
     const auto startTime = std::chrono::high_resolution_clock::now();
     entriesProcessed = 0;
@@ -103,22 +100,29 @@ int Parser::parse()
         auto batch = fileIterator->getNextBatch(batchSize);
         this->entriesProcessed += processBatch(batch);
 
+        const double progress = 100 * static_cast<double>(filesProcessed) / static_cast<double>(totalFiles);
+
         // Progress
-        const int progress = static_cast<int>((static_cast<double>(filesProcessed) / totalFiles) * 100);
         auto currentTime = std::chrono::high_resolution_clock::now();
         const auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(currentTime - startTime).count();
 
-        const double filesPerSecond = filesProcessed > 0 ? static_cast<double>(filesProcessed) / elapsed : 0;
+        const double filesPerSecond = filesProcessed > 0 ? static_cast<double>(filesProcessed) / static_cast<double>(elapsed) : 0;
+        const std::string postfixText {std::to_string(filesPerSecond) + " ファイル/s | 項目：" + std::to_string(entriesProcessed)};
+        pbar->set_option(indicators::option::PostfixText{postfixText});
 
-        std::cout << "\nProgress: " << progress << "% | "
-                    << filesProcessed << "/" << totalFiles << " files | "
-                    << filesPerSecond << "files/s | "
-                    << entriesProcessed << " entries | "
-                    << "Elapsed: " << elapsed << "s | "
-                    << std::flush;
+
+        if (!pbar->is_completed())
+        {
+            if (progress == 100.0)
+                pbar->set_progress(99.9);
+            else
+                pbar->set_progress(progress);
+        }
     }
 
-    std::cout << "Parsed " << entriesProcessed << " entries." << std::endl;
+    pbar->set_option(indicators::option::PostfixText{""});
+    pbar->set_option(indicators::option::PrefixText{std::to_string(entriesProcessed) + "の項目を収録しました"});
+    pbar->set_progress(100.0);
 
     return entriesProcessed;
 }

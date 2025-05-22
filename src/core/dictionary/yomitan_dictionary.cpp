@@ -118,13 +118,17 @@ bool YomitanDictionary::flushChunkToDisk()
         }
 
         const auto nextTermBankNumber = FileUtils::getNextTermBankNumber(tempDir);
-        const std::string_view filename {"term_bank_" + std::to_string(nextTermBankNumber) + ".json"};
+        const std::filesystem::path filename {"term_bank_" + std::to_string(nextTermBankNumber) + ".json"};
         const std::filesystem::path termBankPath {tempDir / filename};
 
         std::ofstream termBankFile {termBankPath, std::ios::trunc};
         if (!termBankFile.is_open())
         {
             std::cerr << "Could not open term bank file: " << termBankPath << std::endl;
+            std::cerr << "Nextw term bank number: " << nextTermBankNumber << std::endl;
+            std::cerr << "Temp dir: " << tempDir << std::endl;
+            std::cerr << "Filename: " << filename << std::endl;
+            throw std::runtime_error("Could not open term bank file");
             return false;
         }
 
@@ -309,5 +313,11 @@ const YomitanDictionaryConfig &YomitanDictionary::getConfig() const
 {
     return config;
 }
+
+const std::string &YomitanDictionary::getTitle() const
+{
+    return config.title;
+}
+
 
 

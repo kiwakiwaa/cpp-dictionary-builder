@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../include/yomitan_dictionary_builder/utils/jptools/kanji_utils.h"
+#include "yomitan_dictionary_builder/utils/jptools/kanji_utils.h"
 
 TEST(KanjiUtilsTest, SingleCharacterTests)
 {

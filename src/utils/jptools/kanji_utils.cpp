@@ -1,4 +1,5 @@
 #include "yomitan_dictionary_builder/utils/jptools/kanji_utils.h"
+#include "utfcpp/utf8.h"
 
 #include <locale>
 #include <codecvt>
@@ -88,15 +89,17 @@ namespace KanjiUtils
     // convert utf8 to utf32 characters
     std::u32string utf8ToUtf32(const std::string_view utf8Str)
     {
-        std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
-        return converter.from_bytes(utf8Str.data(), utf8Str.data() + utf8Str.size());
+        std::u32string result;
+        utf8::utf8to32(utf8Str.begin(), utf8Str.end(), std::back_inserter(result));
+        return result;
     }
 
     //convert utf32 to utf8 characters
     std::string utf32ToUtf8(const std::u32string& utf32Str)
     {
-        std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
-        return converter.to_bytes(utf32Str);
+        std::string result;
+        utf8::utf32to8(utf32Str.begin(), utf32Str.end(), std::back_inserter(result));
+        return result;
     }
 
     bool isKanjiString(const std::string_view text)

@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
-#include "../src/core/dictionary/html_element.h"
-#include "../include/core/dictionary/dicentry.h"
+#include "yomitan_dictionary_builder/core/dictionary/dicentry.h"
 
 TEST(HTMLElementTest, CreateElement)
 {
