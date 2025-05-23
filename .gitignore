@@ -34,3 +34,18 @@
 *.exe
 *.out
 *.app
+
+
+# Ignore everything in resources/
+resources/**
+
+# But allow dictionaries.yaml
+!resources/dictionaries.yaml
+
+# Allow folder structure only, not contents
+!resources/parsers/
+!resources/parsers/**/
+# Deny index and pages subfolders explicitly
+resources/parsers/**/index/
+resources/parsers/**/pages/
+

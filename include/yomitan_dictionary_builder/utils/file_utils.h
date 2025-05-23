@@ -20,6 +20,11 @@ namespace FileUtils
     public:
         explicit FileIterator(const std::filesystem::path& directoryPath) : directoryPath(directoryPath)
         {
+            if (!std::filesystem::exists(directoryPath))
+            {
+                throw std::runtime_error("Directory does not exist: " + directoryPath.string());
+            }
+
             for (const auto& entry : std::filesystem::directory_iterator(directoryPath))
             {
                 if (entry.is_regular_file() && entry.path().extension().string() == ".xml")
@@ -52,7 +57,7 @@ namespace FileUtils
          * Check if there are more files to process
          * @return True if there are more files to process
          */
-        bool hasMore() const
+        [[nodiscard]] bool hasMore() const
         {
             return currentIndex < allFiles.size();
         }
@@ -61,7 +66,7 @@ namespace FileUtils
          * Get total file count in directory
          * @return Total count of files in directory
          */
-        size_t getTotalFilesCount() const
+        [[nodiscard]] size_t getTotalFilesCount() const
         {
             return allFiles.size();
         }
@@ -104,7 +109,7 @@ namespace FileUtils
         }
     }
 
-    inline bool loadXMLFile(pugi::xml_document& doc, const std::filesystem::path& filePath, std::string )
+    inline bool loadXMLFile(pugi::xml_document& doc, const std::filesystem::path& filePath)
     {
         if (!std::filesystem::exists(filePath))
         {
@@ -137,50 +142,53 @@ namespace FileUtils
 
     inline int getNextTermBankNumber(const std::filesystem::path& folderPath)
     {
-        if (!std::filesystem::is_directory(folderPath))
+        std::error_code ec;
+        if (!std::filesystem::is_directory(folderPath, ec) || ec) {
             return 1;
+        }
 
-        std::vector<std::string> termBankFiles;
-        for (auto const& entry : std::filesystem::directory_iterator(folderPath))
-        {
-            if (entry.path().extension() == ".json")
-            {
-                if (auto filename = entry.path().filename().string(); filename.contains("term_bank"))
-                    termBankFiles.emplace_back(filename);
+        int maxNumber = 0;
+        const std::regex termBankPattern(R"(term_bank_(\d+)\.json$)");
+
+        for (const auto& entry : std::filesystem::directory_iterator(folderPath, ec)) {
+            if (ec) break;
+
+            if (!entry.is_regular_file(ec) || ec) continue;
+
+            const std::string filename = entry.path().filename().string();
+            if (std::smatch match; std::regex_match(filename, match, termBankPattern)) {
+                int number = std::stoi(match[1].str());
+                maxNumber = std::max(maxNumber, number);
             }
         }
-        return static_cast<int>(termBankFiles.size()) + 1;
+
+        return maxNumber + 1;
     }
 
-    inline void cleanTermBankDirectory(const std::string& dirPath)
-    {
-        const std::regex termBankFilePattern("term_bank_\\d+\\.json");
-
-        for (const auto& file : std::filesystem::directory_iterator(dirPath))
-        {
-            if (std::filesystem::is_regular_file(file) && std::regex_match(file.path().filename().string(), termBankFilePattern))
-            {
-                if (std::error_code ec; !std::filesystem::remove(file.path(), ec))
-                {
-                    std::cerr << "Error removing file: " << file.path().string() << ec.message() << std::endl;
-                }
-            }
-        }
-    }
-
-    inline std::string getUsernameFolder()
+    inline std::optional<std::string> getUsernameFolder()
     {
 #ifdef _WIN32
         const char* home = std::getenv("USERPROFILE");
 #else
         const char* home = std::getenv("HOME");
 #endif
-        if (!home) return "";
+        if (!home || std::strlen(home) == 0) {
+            return std::nullopt;
+        }
 
         const std::filesystem::path homePath(home);
-        std::string homePathStr = homePath.filename().string();
-        homePathStr[0] = std::toupper(homePathStr[0]);
-        return homePathStr;
+        std::string username = homePath.filename().string();
+
+        if (username.empty()) {
+            return std::nullopt;
+        }
+
+
+        if (std::isalpha(static_cast<unsigned char>(username[0]))) {
+            username[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(username[0])));
+        }
+
+        return username;
     }
 };
 

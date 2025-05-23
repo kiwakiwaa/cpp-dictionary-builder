@@ -26,8 +26,13 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+file(GLOB_RECURSE parser_headers "include/yomitan_dictionary_builder/parsers/*/parser.h")
+file(GLOB_RECURSE parser_sources "src/parsers/*/parser.cpp")
 
 add_library(yomitan_dictionary_builder_lib STATIC
+        ${parser_sources}
+        src/config/config_loader.cpp
+        src/config/parser_registry.cpp
         src/core/dictionary/dicentry.cpp
         src/core/dictionary/html_element.cpp
         src/core/dictionary/yomitan_dictionary.cpp
@@ -37,7 +42,7 @@ add_library(yomitan_dictionary_builder_lib STATIC
         src/utils/jptools/kana_convert.cpp
         src/index/index_reader.cpp
         src/main.cpp
-        src/test.cpp
+        #src/test.cpp
         lib/pugixml.cpp
 )
 

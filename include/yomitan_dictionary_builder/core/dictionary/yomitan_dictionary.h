@@ -63,10 +63,9 @@ public:
     /**
      * Exports the dictionary to the specified path
      * @param outputPath Path where the dictionary should be exported
-     * @param moveTermBanks If true, term banks will be moved to the output path
      * @return True if export was successful
      */
-    bool exportDictionary(std::string_view outputPath, bool moveTermBanks = true);
+    bool exportDictionary(std::string_view outputPath);
 
     /**
      * Flushes any remaining entries to disk
@@ -112,7 +111,6 @@ private:
     std::filesystem::path tempDir;
     std::vector<std::unique_ptr<DicEntry>> currentChunk;
     size_t totalEntries = 0;
-    bool tempDirIsCleaned = false;
 };
 
 struct DictionaryIndex

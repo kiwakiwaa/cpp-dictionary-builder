@@ -30,7 +30,7 @@ public:
      * @param ignoreExpressions
      * @return true if parsing was successful
      */
-    bool parseEntry(
+    [[nodiscard]] bool parseEntry(
         const std::string& term,
         const std::string& reading,
         const pugi::xml_document& doc,
@@ -52,22 +52,23 @@ public:
      * @param outputPath Path to export the dictionary to
      * @return true if export was successful
      */
-    bool exportDictionary(const std::string_view outputPath) const;
+    [[nodiscard]] bool exportDictionary(std::string_view outputPath) const;
 
 protected:
     /**
      * Process a single file
      * @param filePath XML file path
-     * @return true if processing was successful
+     * @return Number of entries parsed from file
      */
-    virtual bool processFile(const std::filesystem::path& filePath);
+    virtual int processFile(const std::filesystem::path& filePath) = 0;
 
     /**
      * Normalise reading keys
      * @param keys Keys to normalise
+     * @param context Context extracted from the XML used for deciding how to normalise the keys
      * @return Normalised keys
      */
-    std::vector<std::string> normalizeKeys(const std::vector<std::string>& keys);
+    static std::vector<std::string> normalizeKeys(const std::vector<std::string>& keys, std::string_view context);
 
     /**
      * Get part-of-speech tags for a term

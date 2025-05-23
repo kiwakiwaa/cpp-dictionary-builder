@@ -1,41 +1,19 @@
 #include "yomitan_dictionary_builder/core/dictionary/yomitan_dictionary.h"
-#include "yomitan_dictionary_builder/core/parser.h"
-#include "yomitan_dictionary_builder/config/parser_config.h"
-#include <iostream>
-#include <filesystem>
+#include "yomitan_dictionary_builder/config/config_loader.h"
+#include "yomitan_dictionary_builder/config/parser_registry.h"
 
-class ParserFactory
-{
-public:
-    static std::unique_ptr<Parser> createParser(std::unique_ptr<YomitanDictionary> dictionary, const ParserConfig& config)
-    {
-        // Default to base parser
-        return std::make_unique<Parser>(std::move(dictionary), config);
-    }
-};
+#include <iostream>
 
 int main()
 {
-    auto dictionary = std::make_unique<YomitanDictionary>(YomitanDictionaryConfig{
-        "大漢和辞典",
-        "Bint",
-        "yomitan.com",
-        "test dictionary",
-        "only me",
-        "test-dict",
-        3,
-        4000,
-        true,
-    });
+    ParserRegistry::registerAllParsers();
+    const auto configLoader = ConfigLoader::loadFromFile("/Users/caoimhe/Documents/日本語/Dictionary Conversion/yomitan-dictionary-builder/resources/dictionaries.yaml");
+    auto [yomitanConfig, parserConfig] = configLoader.getDictionaryInfo("YDP");
+    auto dictionary = std::make_unique<YomitanDictionary>(yomitanConfig);
 
-     auto config = ParserConfigBuilder(
-        "/Users/caoimhe/Documents/日本語/Dictionary Conversion/monokakido-to-yomitan/data/SKOGO/pages",
-        "SKOGO"
-    )
-    .withShowProgress(true)
-    .build();
+    auto& registry = ParserRegistry::getInstance();
+    const auto parser = registry.createParser("YDP", std::move(dictionary), parserConfig);
 
-    const auto parser = ParserFactory::createParser(std::move(dictionary), std::move(config));
     const int parsedEntries = parser->parse();
     std::cout << "Parsed entries: " << parsedEntries << std::endl;
 

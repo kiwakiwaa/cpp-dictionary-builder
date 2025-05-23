@@ -11,11 +11,13 @@ struct ParserConfig
     std::string dictionaryType;
 
     // Strategies
+    std::string linkStrategyType = "default";
+    std::string imageStrategyType = "default";
     std::function<std::unique_ptr<LinkHandlingStrategy>()> createLinkStrategy;
     std::function<std::unique_ptr<ImageHandlingStrategy>()> createImageStrategy;
 
     // Paths
-    std::optional<std::filesystem::path> dictionaryPath;
+    std::filesystem::path dictionaryPath;
     std::optional<std::filesystem::path> tagMappingPath;
     std::optional<std::filesystem::path> indexPath;
     std::optional<std::filesystem::path> jmdictPath;
@@ -27,115 +29,22 @@ struct ParserConfig
     std::optional<std::string> expressionElement;
     bool parseAllLinks = false;
     bool showProgress = false;
-
     int parsingBatchSize = 250;
 
-    explicit ParserConfig(
-        const std::filesystem::path& dictionaryPath,
-        const std::string_view dictionaryType
-        ) : dictionaryPath(dictionaryPath), dictionaryType(dictionaryType)
-    {
-    }
-};
-
-
-class ParserConfigBuilder {
-
-public:
-
-    explicit ParserConfigBuilder(
-        const std::filesystem::path& dictionaryPath,
-        const std::string_view dictionaryType
-        ) : parserConfig(dictionaryPath, dictionaryType)
-    {
-    }
-
-    ParserConfigBuilder& withDictionaryPath(const std::filesystem::path& path)
-    {
-        parserConfig.dictionaryPath = path;
-        return *this;
-    }
-
-    ParserConfigBuilder& withTagMappingPath(const std::filesystem::path& path)
-    {
-        parserConfig.tagMappingPath = path;
-        return *this;
-    }
-
-    ParserConfigBuilder& withIndexPath(const std::filesystem::path& path)
-    {
-        parserConfig.indexPath = path;
-        return *this;
-    }
-
-    ParserConfigBuilder& withJmdictPath(const std::filesystem::path& path)
-    {
-        parserConfig.jmdictPath = path;
-        return *this;
-    }
-
-    ParserConfigBuilder& withAudioPath(const std::filesystem::path& path)
-    {
-        parserConfig.audioPath = path;
-        return *this;
-    }
-
-    ParserConfigBuilder& withAppendixPath(const std::filesystem::path& path)
-    {
-        parserConfig.appendixPath = path;
-        return *this;
-    }
-
-    ParserConfigBuilder& withLinkStrategy(std::function<std::unique_ptr<LinkHandlingStrategy>()> linkStrategy)
-    {
-        parserConfig.createLinkStrategy = std::move(linkStrategy);
-        return *this;
-    }
-
-    ParserConfigBuilder& withImageStrategy(std::function<std::unique_ptr<ImageHandlingStrategy>()> imageStrategy)
-    {
-        parserConfig.createImageStrategy = std::move(imageStrategy);
-        return *this;
-    }
-
-    ParserConfigBuilder& withIgnoredElements(const std::set<std::string>& ignoredElements)
-    {
-        parserConfig.ignoredElements = ignoredElements;
-        return *this;
-    }
-
-    ParserConfigBuilder& withExpressionElement(const std::string& expressionElement)
-    {
-        parserConfig.expressionElement = expressionElement;
-        return *this;
-    }
-
-    ParserConfigBuilder& withParseAllLinks(const bool parseAllLinks)
-    {
-        parserConfig.parseAllLinks = parseAllLinks;
-        return *this;
-    }
-
-    ParserConfigBuilder& withShowProgress(const bool showProgress)
-    {
-        parserConfig.showProgress = showProgress;
-        return *this;
-    }
-
-    ParserConfigBuilder& withParsingBatchSize(const int parsingBatchSize)
-    {
-        parserConfig.parsingBatchSize = parsingBatchSize;
-        return *this;
-    }
-
-    ParserConfig build()
-    {
-        return parserConfig;
-    }
-
-private:
-    ParserConfig parserConfig;
-
+    // Setters
+    void setLinkStrategyType(const std::string& type) { linkStrategyType = type; }
+    void setImageStrategyType(const std::string& type) { imageStrategyType = type; }
+    void setDictionaryPath(const std::string& path) { dictionaryPath = path; }
+    void setTagMappingPath(const std::string& path) { tagMappingPath = path; }
+    void setIndexPath(const std::string& path) { indexPath = path; }
+    void setJmdictPath(const std::string& path) { jmdictPath = path; }
+    void setAudioPath(const std::string& path) { audioPath = path; }
+    void setAppendixPath(const std::string& path) { appendixPath = path; }
+    void setIgnoredElements(const std::set<std::string>& elements) { ignoredElements = elements; }
+    void setExpressionElement(const std::string& element) { expressionElement = element; }
+    void setParserAllLinks(const bool b) { parseAllLinks = b; }
+    void setShowProgress(const bool b) { showProgress = b; }
+    void setParsingBatchSize(const int b) { parsingBatchSize = b; }
 };
 
 #endif

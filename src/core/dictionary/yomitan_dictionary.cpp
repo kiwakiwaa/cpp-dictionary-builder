@@ -15,7 +15,11 @@ YomitanDictionary::YomitanDictionary(const YomitanDictionaryConfig &config) : co
     else
         tempDir =  getDefaultTempDir();
 
-    ensureTempDirExits();
+    if (!ensureTempDirExits())
+    {
+        std::cerr << "Failed to create temporary directory with path " << tempDir.string() << std::endl;
+        throw std::runtime_error("Failed to create temporary directory");
+    }
 }
 
 YomitanDictionary::~YomitanDictionary()
@@ -111,12 +115,6 @@ bool YomitanDictionary::flushChunkToDisk()
         if (!ensureTempDirExits())
             return false;
 
-        if (!tempDirIsCleaned)
-        {
-            FileUtils::cleanTermBankDirectory(tempDir.string());
-            tempDirIsCleaned = true;
-        }
-
         const auto nextTermBankNumber = FileUtils::getNextTermBankNumber(tempDir);
         const std::filesystem::path filename {"term_bank_" + std::to_string(nextTermBankNumber) + ".json"};
         const std::filesystem::path termBankPath {tempDir / filename};
@@ -129,7 +127,6 @@ bool YomitanDictionary::flushChunkToDisk()
             std::cerr << "Temp dir: " << tempDir << std::endl;
             std::cerr << "Filename: " << filename << std::endl;
             throw std::runtime_error("Could not open term bank file");
-            return false;
         }
 
         std::string termBankJson;
@@ -164,7 +161,7 @@ bool YomitanDictionary::exportIndex(const std::string_view outputPath) const
 {
     try
     {
-        const std::filesystem::path indexFilePath {(std::filesystem::path(outputPath).parent_path() / "index.json").string()};
+        const std::filesystem::path indexFilePath {(std::filesystem::path(outputPath) / "index.json").string()};
         std::ofstream indexFile{indexFilePath, std::ios::trunc};
         if (!indexFile.is_open())
         {
@@ -172,9 +169,18 @@ bool YomitanDictionary::exportIndex(const std::string_view outputPath) const
             return false;
         }
 
+        std::string author {config.author};
+        if (author.empty())
+        {
+            if (const auto& userName = FileUtils::getUsernameFolder(); userName.has_value())
+            {
+                author = userName.value();
+            }
+        }
+
         DictionaryIndex index{
             config.title,
-            config.author.empty() ? FileUtils::getUsernameFolder() : config.author,
+            author,
             config.url,
             config.description,
             config.attribution,
@@ -236,30 +242,29 @@ bool YomitanDictionary::moveTermBanksToOutput(const std::string_view outputPath)
         }
 
         // copy all term banks to the output dir
-        int copiedFiles = 0;
+        int movedFiles = 0;
         for (const auto& entry : std::filesystem::directory_iterator(tempDir))
         {
             if (entry.is_regular_file() &&
                 entry.path().filename().string().find("term_bank_") == 0)
             {
                 std::filesystem::path destination = outputDir / entry.path().filename();
-                std::filesystem::copy_file(
-                    entry.path(),
-                    destination,
-                    std::filesystem::copy_options::overwrite_existing
-                    );
-                copiedFiles++;
+                std::filesystem::rename(entry.path(), destination);
+                movedFiles++;
             }
         }
 
-        if (copiedFiles == 0)
+        if (movedFiles == 0)
         {
             std::cerr << "No term banks found to copy: " << outputDir.string() << std::endl;
         }
         else
         {
-            std::cout << "Copied " << copiedFiles << " term banks to " << outputDir << std::endl;
+            std::cout << "Copied " << movedFiles << " term banks to " << outputDir << std::endl;
         }
+
+        std::filesystem::remove_all(tempDir);
+
         return true;
     }
     catch (const std::filesystem::filesystem_error& e)
@@ -279,7 +284,7 @@ size_t YomitanDictionary::getEntryCount() const
     return totalEntries;
 }
 
-bool YomitanDictionary::exportDictionary(const std::string_view outputPath, bool moveTermBanks)
+bool YomitanDictionary::exportDictionary(const std::string_view outputPath)
 {
     // first flush any remaining entries
     if (!currentChunk.empty() && !flushChunkToDisk())
@@ -289,17 +294,15 @@ bool YomitanDictionary::exportDictionary(const std::string_view outputPath, bool
     }
 
     // export index file
+    if (!moveTermBanksToOutput(outputPath))
+    {
+        return false;
+    }
+
     if (!exportIndex(outputPath))
     {
         return false;
     }
-
-    // move termbanks if requested
-    if (moveTermBanks && !moveTermBanksToOutput(outputPath))
-    {
-        return false;
-    }
-
     return true;
 }
 

@@ -10,7 +10,7 @@
 #include <unordered_set>
 #include <vector>
 
-const std::unordered_set<std::string> ignoredAttributes = {
+const std::unordered_set<std::string_view> ignoredAttributes = {
     "rel", "http-equiv", "xmlns", "hmhtml", "content", "media", "alt", "rowspan"
 };
 
@@ -63,9 +63,25 @@ public:
      [[nodiscard]] std::shared_ptr<HTMLElement> convertElementToYomitan(const pugi::xml_node& node, bool ignoreExpressions = false) const;
 
 protected:
+    /**
+     * Gets the stripped text contents of an XML element
+     * @param node The XML node to strip
+     * @param ignoredElements Set of tag names to ignore
+     * @return String with the stripped text content
+     */
+    static std::string getElementText(const pugi::xml_node& node, const std::optional<std::set<std::string>>& ignoredElements = std::nullopt);
+
+    /**
+     * Loads the tag mapping for a dictionary from a specified path
+     * @param filePath The path to the json file
+     */
+    void loadTagMapping(const std::filesystem::path& filePath);
+
     std::unique_ptr<indicators::ProgressBar> pbar;
     ParserConfig config;
     std::unordered_map<std::string, std::string> tagMapping;
+
+    bool hasParentSelectors = false;
 };
 
 

@@ -5,9 +5,12 @@
 #include <iostream>
 #include <utility>
 
+#include "yomitan_dictionary_builder/utils/jptools/kana_convert.h"
+#include "yomitan_dictionary_builder/utils/jptools/kanji_utils.h"
+
 Parser::Parser(std::unique_ptr<YomitanDictionary> dictionary, const ParserConfig& parserConfig) : XMLParser(parserConfig)
 {
-    this->fileIterator = std::make_unique<FileUtils::FileIterator>(config.dictionaryPath.value());
+    this->fileIterator = std::make_unique<FileUtils::FileIterator>(config.dictionaryPath);
     this->batchSize = config.parsingBatchSize;
     this->dictionary = std::move(dictionary);
     this->indexReader = config.indexPath.has_value() ? std::make_unique<IndexReader>(config.indexPath.value().string()) : nullptr;
@@ -87,13 +90,15 @@ int Parser::parse()
 
     const size_t totalFiles = fileIterator->getTotalFilesCount();
 
-    pbar->set_option(indicators::option::PrefixText{std::to_string(totalFiles) + std::string{"のファイルを処理中"}});
-    pbar->set_progress(0.0);
+    if (config.showProgress)
+    {
+        pbar->set_option(indicators::option::PrefixText{std::to_string(totalFiles) + std::string{"のファイルを処理中"}});
+        pbar->set_progress(0.0);
+    }
 
     const auto startTime = std::chrono::high_resolution_clock::now();
     entriesProcessed = 0;
     filesProcessed = 0;
-
 
     while (fileIterator->hasMore())
     {
@@ -103,26 +108,31 @@ int Parser::parse()
         const double progress = 100 * static_cast<double>(filesProcessed) / static_cast<double>(totalFiles);
 
         // Progress
-        auto currentTime = std::chrono::high_resolution_clock::now();
-        const auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(currentTime - startTime).count();
-
-        const double filesPerSecond = filesProcessed > 0 ? static_cast<double>(filesProcessed) / static_cast<double>(elapsed) : 0;
-        const std::string postfixText {std::to_string(filesPerSecond) + " ファイル/s | 項目：" + std::to_string(entriesProcessed)};
-        pbar->set_option(indicators::option::PostfixText{postfixText});
-
-
-        if (!pbar->is_completed())
+        if (config.showProgress)
         {
-            if (progress == 100.0)
-                pbar->set_progress(99.9);
-            else
-                pbar->set_progress(progress);
+            auto currentTime = std::chrono::high_resolution_clock::now();
+            const auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(currentTime - startTime).count();
+
+            const double filesPerSecond = filesProcessed > 0 ? static_cast<double>(filesProcessed) / static_cast<double>(elapsed) : 0;
+            const std::string postfixText {std::to_string(filesPerSecond) + " ファイル/s | 項目：" + std::to_string(entriesProcessed)};
+            pbar->set_option(indicators::option::PostfixText{postfixText});
+
+            if (!pbar->is_completed())
+            {
+                if (progress == 100.0)
+                    pbar->set_progress(99.9);
+                else
+                    pbar->set_progress(progress);
+            }
         }
     }
 
-    pbar->set_option(indicators::option::PostfixText{""});
-    pbar->set_option(indicators::option::PrefixText{std::to_string(entriesProcessed) + "の項目を収録しました"});
-    pbar->set_progress(100.0);
+    if (config.showProgress)
+    {
+        pbar->set_option(indicators::option::PostfixText{""});
+        pbar->set_option(indicators::option::PrefixText{std::to_string(entriesProcessed) + "の項目を収録しました"});
+        pbar->set_progress(100.0);
+    }
 
     return entriesProcessed;
 }
@@ -141,40 +151,44 @@ bool Parser::exportDictionary(const std::string_view outputPath) const
 }
 
 
-bool Parser::processFile(const std::filesystem::path& filePath)
+std::vector<std::string> Parser::normalizeKeys(const std::vector<std::string>& keys, const std::string_view context)
 {
-    pugi::xml_document doc;
-    if (const pugi::xml_parse_result result = doc.load_file(filePath.c_str()); !result)
+    std::vector<std::string> normalizedKeys;
+    if (KanjiUtils::isKanjiString(context))
     {
-        std::cerr << "Failed to read xml: " << filePath.filename().string() << std::endl;
-        return false;
+        for (const auto& key : keys)
+        {
+            normalizedKeys.emplace_back(KanaConvert::katakanaToHiragana(key));
+        }
     }
-
-    const bool success = parseEntry(
-        "",
-        "",
-        doc
-    );
-
-    if (success)
+    else if (KanjiUtils::containsKatakana(context))
     {
-        entriesProcessed++;
+        for (const auto& key : keys)
+        {
+            normalizedKeys.emplace_back(KanaConvert::hiraganaToKatakana(key));
+        }
     }
-
-    return success;
+    else
+    {
+        for (const auto& key : keys)
+        {
+            normalizedKeys.emplace_back(KanaConvert::katakanaToHiragana(key));
+        }
+    }
+    return normalizedKeys;
 }
 
 
 
-int Parser::processBatch(const std::vector<std::filesystem::path> &filePaths)
+int Parser::processBatch(const std::vector<std::filesystem::path>& filePaths)
 {
     int batchEntriesProcessed = 0;
 
     for (const auto& filePath : filePaths)
     {
-        if (processFile(filePath))
+        if (const int entriesFromFile = processFile(filePath); entriesFromFile > 0)
         {
-            batchEntriesProcessed++;
+            batchEntriesProcessed += entriesFromFile;
             filesProcessed++;
         }
     }

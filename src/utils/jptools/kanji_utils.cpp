@@ -260,14 +260,6 @@ namespace KanjiUtils
     std::vector<ResultPair> matchKanaWithKanji(const std::vector<std::string>& entries, int recursionLevel) {
         std::vector<ResultPair> results;
         
-        // Early exit if recursion limit is reached
-        if (recursionLevel >= 8) {
-            for (const auto& entry : entries) {
-                results.emplace_back(std::optional(entry), std::nullopt);
-            }
-            return results;
-        }
-        
         // Separate entries into kana and kanji
         std::vector<std::string> kana_entries;
         std::vector<std::string> kanji_entries;
@@ -297,6 +289,16 @@ namespace KanjiUtils
         // Handle foreign entries
         for (const auto& foreign : foreign_entries) {
             results.emplace_back(std::nullopt, std::optional(foreign));
+        }
+
+        // If there are no kanji keys
+        if (kanji_entries.empty())
+        {
+            for (const auto& kana : kana_entries)
+            {
+                results.emplace_back(std::nullopt, std::optional(kana));
+            }
+            return results;
         }
         
         // Check for single kana entry with one or multiple kanji entries
@@ -537,7 +539,7 @@ namespace KanjiUtils
         }
         
         // If we have remaining entries and haven't exceeded recursion limit
-        if (!remaining_kanji.empty() || !remaining_kana.empty()) {
+        if ((!remaining_kanji.empty() || !remaining_kana.empty()) && recursionLevel < 8) {
             std::vector<std::string> remaining_entries;
             remaining_entries.insert(remaining_entries.end(), remaining_kanji.begin(), remaining_kanji.end());
             remaining_entries.insert(remaining_entries.end(), remaining_kana.begin(), remaining_kana.end());

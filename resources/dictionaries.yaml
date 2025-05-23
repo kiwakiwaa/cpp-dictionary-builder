@@ -1,0 +1,18 @@
+general:
+  author: Caoimhe
+  showProgress: true
+  parsingBatchSize: 250
+dictionaries:
+  YDP:
+    YomitanDictionaryConfig:
+      title: "有斐閣現代心理学辞典"
+    ParserConfig:
+      dictionaryPath: "resources/parsers/YDP/pages"
+      indexPath: "resources/parsers/YDP/index/index_d.tsv"
+      showProgress: true
+  Daijisen:
+    YomitanDictionaryConfig:
+      title: "大辞泉"
+    ParserConfig:
+      dictionaryPath: "resources/parsers/DAIJISEN/pages"
+      ignoredElements: {"entry-index", "whatever"}

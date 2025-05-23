@@ -20,25 +20,43 @@ XMLParser::XMLParser(const ParserConfig& config) : config(config)
         );
     }
 
-    if (!this->config.tagMappingPath.has_value())
+    if (config.tagMappingPath.has_value())
     {
-        return;
+        loadTagMapping(config.tagMappingPath.value());
     }
+}
+
+
+void XMLParser::loadTagMapping(const std::filesystem::path &filePath)
+{
+    if (!this->config.tagMappingPath.has_value())
+        return;
 
     const auto json = FileUtils::readFile(this->config.tagMappingPath.value());
-    if (!json.has_value()) {
+    if (!json.has_value())
         return;
-    }
 
-    try {
-        if (const auto ec = glz::read_json(this->tagMapping, json.value())) {
+    try
+    {
+        if (const auto ec = glz::read_json(this->tagMapping, json.value()))
             std::cerr << "Error reading tag map: " << glz::format_error(ec, json.value()) << std::endl;
+
+        // Check if there are any parent selectors in the tag mapping
+        // to avoid unecessary recursion when getting tags later
+        auto predicate = [](const std::string& s) {
+            return s.contains('.') || s.contains(' ');
+        };
+
+        if (std::ranges::any_of(tagMapping | std::views::keys, predicate)) {
+            hasParentSelectors = true;
         }
     }
-    catch (const std::exception& e) {
+    catch (const std::exception& e)
+    {
         std::cerr << "Error reading tag map: " << e.what() << std::endl;
     }
 }
+
 
 // NOLINTNEXTLINE(misc-no-recursion)
 std::string XMLParser::getTargetTag(
@@ -47,6 +65,11 @@ std::string XMLParser::getTargetTag(
     const std::optional<pugi::xml_node>& parent,
     const std::optional<int> recursionDepth) const
 {
+    if (Yomitan::allowedElements.contains(tagName))
+    {
+        return tagName;
+    }
+
     thread_local std::string selectorBuffer;
 
     // Look for nested rules
@@ -173,13 +196,12 @@ std::unordered_map<std::string, std::string> XMLParser::getAttributeData(const p
         if (attrValue.find(".css") != std::string_view::npos || attrValue == "viewport")
             continue;
 
+        if (ignoredAttributes.contains(attrName))
+            continue;
 
         processedName.assign(attrName);
-
         std::ranges::replace(processedName, '-', '_');
-
         dataMap.emplace(std::move(processedName), std::string{attrValue});
-
     }
     return dataMap;
 }
@@ -192,7 +214,7 @@ std::shared_ptr<HTMLElement> XMLParser::convertElementToYomitan(const pugi::xml_
 
     auto dataMap = getAttributeData(node);
     const auto classList = getClassList(node);
-    const auto tagName = getTargetTag(node.name(), classList, node.parent());
+    const auto tagName = hasParentSelectors ? getTargetTag(node.name(), classList, node.parent()) : getTargetTag(node.name());
 
     std::shared_ptr<HTMLElement> element;
 
@@ -221,11 +243,47 @@ std::shared_ptr<HTMLElement> XMLParser::convertElementToYomitan(const pugi::xml_
 
     for (pugi::xml_node child = node.first_child(); child != nullptr; child = child.next_sibling())
     {
-        if (auto childElement = convertElementToYomitan(child))
+        if (child.type() == pugi::node_pcdata || child.type() == pugi::node_cdata)
         {
-            element->addContent(childElement);
+            if (const std::string textContent = child.value(); !textContent.empty())
+            {
+                element->addContent(textContent);
+            }
+        }
+        else if (child.type() == pugi::node_element)
+        {
+            if (auto childElement = convertElementToYomitan(child))
+            {
+                element->addContent(childElement);
+            }
         }
     }
 
     return element;
+}
+
+
+// NOLINTNEXTLINE(misc-no-recursion)
+std::string XMLParser::getElementText(const pugi::xml_node& node, const std::optional<std::set<std::string>>& ignoredElements)
+{
+    std::string collectedText;
+    for (pugi::xml_node child = node.first_child(); child != nullptr; child = child.next_sibling())
+    {
+        if (ignoredElements.has_value())
+            if (ignoredElements->contains(child.name()))
+                continue;
+
+        if (const auto childType = child.type(); childType == pugi::node_pcdata || childType == pugi::node_cdata)
+        {
+            if (const std::string textContent = child.value(); !textContent.empty())
+            {
+                collectedText += textContent;
+            }
+        }
+        else if (childType == pugi::node_element)
+        {
+            collectedText += getElementText(child, ignoredElements);
+        }
+    }
+    return collectedText;
 }
