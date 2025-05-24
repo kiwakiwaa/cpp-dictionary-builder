@@ -30,21 +30,6 @@ struct ParserConfig
     bool parseAllLinks = false;
     bool showProgress = false;
     int parsingBatchSize = 250;
-
-    // Setters
-    void setLinkStrategyType(const std::string& type) { linkStrategyType = type; }
-    void setImageStrategyType(const std::string& type) { imageStrategyType = type; }
-    void setDictionaryPath(const std::string& path) { dictionaryPath = path; }
-    void setTagMappingPath(const std::string& path) { tagMappingPath = path; }
-    void setIndexPath(const std::string& path) { indexPath = path; }
-    void setJmdictPath(const std::string& path) { jmdictPath = path; }
-    void setAudioPath(const std::string& path) { audioPath = path; }
-    void setAppendixPath(const std::string& path) { appendixPath = path; }
-    void setIgnoredElements(const std::set<std::string>& elements) { ignoredElements = elements; }
-    void setExpressionElement(const std::string& element) { expressionElement = element; }
-    void setParserAllLinks(const bool b) { parseAllLinks = b; }
-    void setShowProgress(const bool b) { showProgress = b; }
-    void setParsingBatchSize(const int b) { parsingBatchSize = b; }
 };
 
 #endif

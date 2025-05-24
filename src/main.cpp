@@ -7,7 +7,8 @@
 int main()
 {
     ParserRegistry::registerAllParsers();
-    const auto configLoader = ConfigLoader::loadFromFile("/Users/caoimhe/Documents/日本語/Dictionary Conversion/yomitan-dictionary-builder/resources/dictionaries.yaml");
+
+    const auto configLoader = ConfigLoader::loadFromFile("resources/dictionaries.yaml");
     auto [yomitanConfig, parserConfig] = configLoader.getDictionaryInfo("YDP");
     auto dictionary = std::make_unique<YomitanDictionary>(yomitanConfig);
 

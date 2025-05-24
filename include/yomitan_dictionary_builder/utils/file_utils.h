@@ -183,7 +183,6 @@ namespace FileUtils
             return std::nullopt;
         }
 
-
         if (std::isalpha(static_cast<unsigned char>(username[0]))) {
             username[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(username[0])));
         }

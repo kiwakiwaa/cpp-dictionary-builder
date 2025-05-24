@@ -4,7 +4,6 @@
 #include <regex>
 #include <string>
 #include <string_view>
-#include <array>
 #include <optional>
 
 namespace KanjiUtils
@@ -49,7 +48,18 @@ namespace KanjiUtils
     bool isHentaiganaString(std::string_view text);
     bool containsHentaigana(std::string_view text);
 
+    /**
+     * Helper method to convert a string from UTF-8 to UTF-32
+     * @param utf8Str The UTF-8 encoded string to convert
+     * @return UTF-32 encoded string
+     */
     std::u32string utf8ToUtf32(std::string_view utf8Str);
+
+    /**
+     * Helper method to convert a string from UTF-32 to UTF-8
+     * @param utf32Str The UTF-32 encoded string to convert
+     * @return UTF-8 encoded string
+     */
     std::string utf32ToUtf8(const std::u32string& utf32Str);
 
     std::string extractKanjiStem(const std::string& kanjiEntry);
@@ -60,9 +70,14 @@ namespace KanjiUtils
 
     bool isPlausibleReading(const std::string& kana, const std::string& kanji);
 
-    // :skull:
     using ResultPair = std::pair<std::optional<std::string>, std::optional<std::string>>;
 
+    /**
+     * Processes a vector of entry keys and matches their kanji and kana keys
+     * @param entries The vector of entry keys to match
+     * @param recursionLevel Current recursion depth (maximum 8)
+     * @return A vector of matched key pairs
+     */
     std::vector<ResultPair> matchKanaWithKanji(const std::vector<std::string>& entries, int recursionLevel = 0);
 
 

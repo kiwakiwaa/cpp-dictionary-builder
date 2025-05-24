@@ -7,8 +7,9 @@
 ConfigLoader ConfigLoader::loadFromFile(std::string_view filePath)
 {
     ConfigLoader configLoader;
-    std::ifstream file(filePath.data());
+    const auto configPath = std::filesystem::current_path().parent_path() / filePath;
 
+    std::ifstream file(configPath);
     if (!file.is_open()) {
         throw std::runtime_error("Could not open config file: " + std::string(filePath));
     }
@@ -59,9 +60,9 @@ ConfigLoader ConfigLoader::loadFromFile(std::string_view filePath)
             if (key == "author") {
                 defaultYomitanConfig.author = value;
             } else if (key == "showProgress") {
-                defaultParserConfig.setShowProgress(value == "true");
+                defaultParserConfig.showProgress = value == "true";
             } else if (key == "parsingBatchSize") {
-                defaultParserConfig.setParsingBatchSize(std::stoi(value));
+                defaultParserConfig.parsingBatchSize = std::stoi(value);
             }
             continue;
         }
@@ -69,10 +70,11 @@ ConfigLoader ConfigLoader::loadFromFile(std::string_view filePath)
         // Dictionary name (2 spaces)
         if (line.starts_with(TWO_SPACES) && !line.starts_with(FOUR_SPACES) && line.find(':') != std::string::npos)
         {
-            currentDict = line.substr(2, line.find(":") - 2);
+            currentDict = line.substr(2, line.find(':') - 2);
             currentSection = Section::NONE;
+            defaultParserConfig.dictionaryType = currentDict;
 
-            // Initialize with default values
+            // Initialise with default values
             configLoader.dictionaries_[currentDict] = DictionaryConfigPair{
                 defaultYomitanConfig,
                 defaultParserConfig
@@ -84,7 +86,7 @@ ConfigLoader ConfigLoader::loadFromFile(std::string_view filePath)
         if (line.starts_with(FOUR_SPACES) && !line.starts_with(SIX_SPACES) &&
             line.find(':') != std::string::npos && !currentDict.empty())
         {
-            std::string sectionName = line.substr(4, line.find(":") - 4);
+            std::string sectionName = line.substr(4, line.find(':') - 4);
 
             if (sectionName == "YomitanDictionaryConfig") {
                 currentSection = Section::YOMITAN_CONFIG;
@@ -142,32 +144,33 @@ ConfigLoader ConfigLoader::loadFromFile(std::string_view filePath)
                 else if (key == "imageStrategyType")
                     parserConfig.imageStrategyType = value;
                 else if (key == "dictionaryPath")
-                    parserConfig.setDictionaryPath(std::filesystem::current_path().parent_path() / value);
+                    parserConfig.dictionaryPath = std::filesystem::current_path().parent_path() / value;
                 else if (key == "tagMappingPath")
-                    parserConfig.setTagMappingPath(std::filesystem::current_path().parent_path() / value);
+                    parserConfig.tagMappingPath = std::filesystem::current_path().parent_path() / value;
                 else if (key == "indexPath")
-                    parserConfig.setIndexPath(std::filesystem::current_path().parent_path() / value);
+                    parserConfig.indexPath = std::filesystem::current_path().parent_path() / value;
                 else if (key == "jmdictPath")
-                    parserConfig.setJmdictPath(std::filesystem::current_path().parent_path() / value);
+                    parserConfig.jmdictPath = std::filesystem::current_path().parent_path() / value;
                 else if (key == "audioPath")
-                    parserConfig.setAudioPath(std::filesystem::current_path().parent_path() / value);
+                    parserConfig.audioPath = std::filesystem::current_path().parent_path() / value;
                 else if (key == "appendixPath")
-                    parserConfig.setAppendixPath(std::filesystem::current_path().parent_path() / value);
+                    parserConfig.appendixPath = std::filesystem::current_path().parent_path() / value;
                 else if (key == "ignoredElements")
-                    parserConfig.setIgnoredElements(parseSimpleSet(value));
+                    parserConfig.ignoredElements = parseSimpleSet(value);
                 else if (key == "expressionElement")
-                    parserConfig.setExpressionElement(value);
+                    parserConfig.expressionElement = value;
                 else if (key == "parseAllLinks")
-                    parserConfig.setParserAllLinks(value == "true");
+                    parserConfig.parseAllLinks = value == "true";
                 else if (key == "showProgress")
-                    parserConfig.setShowProgress(value == "true");
+                    parserConfig.showProgress = value == "true";
                 else if (key == "parsingBatchSize")
-                    parserConfig.setParsingBatchSize(std::stoi(value));
+                    parserConfig.parsingBatchSize = std::stoi(value);
             }
         }
     }
     return configLoader;
 }
+
 
 DictionaryConfigPair ConfigLoader::getDictionaryInfo(const std::string& dictName) const
 {

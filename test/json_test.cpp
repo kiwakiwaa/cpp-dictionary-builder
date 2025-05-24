@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "yomitan_dictionary_builder/core/dictionary/yomitan_dictionary.h"
-#include "../include/yomitan_dictionary_builder/utils/file_utils.h"
+#include "yomitan_dictionary_builder/utils/file_utils.h"
 #include <iostream>
 
 TEST(TEST_JSON, ReadJson)

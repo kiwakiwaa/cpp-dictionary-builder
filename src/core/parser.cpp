@@ -16,11 +16,6 @@ Parser::Parser(std::unique_ptr<YomitanDictionary> dictionary, const ParserConfig
     this->indexReader = config.indexPath.has_value() ? std::make_unique<IndexReader>(config.indexPath.value().string()) : nullptr;
 }
 
-Parser::Parser(std::string_view dictionaryName) : XMLParser(ParserConfig{"", ""})
-{
-    dictionary = std::make_unique<YomitanDictionary>(dictionaryName);
-}
-
 
 Parser::~Parser() = default;
 
@@ -96,7 +91,7 @@ int Parser::parse()
         pbar->set_progress(0.0);
     }
 
-    const auto startTime = std::chrono::high_resolution_clock::now();
+    startTime = std::chrono::high_resolution_clock::now();
     entriesProcessed = 0;
     filesProcessed = 0;
 
@@ -105,25 +100,9 @@ int Parser::parse()
         auto batch = fileIterator->getNextBatch(batchSize);
         this->entriesProcessed += processBatch(batch);
 
-        const double progress = 100 * static_cast<double>(filesProcessed) / static_cast<double>(totalFiles);
-
-        // Progress
         if (config.showProgress)
         {
-            auto currentTime = std::chrono::high_resolution_clock::now();
-            const auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(currentTime - startTime).count();
-
-            const double filesPerSecond = filesProcessed > 0 ? static_cast<double>(filesProcessed) / static_cast<double>(elapsed) : 0;
-            const std::string postfixText {std::to_string(filesPerSecond) + " ファイル/s | 項目：" + std::to_string(entriesProcessed)};
-            pbar->set_option(indicators::option::PostfixText{postfixText});
-
-            if (!pbar->is_completed())
-            {
-                if (progress == 100.0)
-                    pbar->set_progress(99.9);
-                else
-                    pbar->set_progress(progress);
-            }
+            updateProgress();
         }
     }
 
@@ -179,6 +158,37 @@ std::vector<std::string> Parser::normalizeKeys(const std::vector<std::string>& k
 }
 
 
+void Parser::updateProgress() const
+{
+    if (!config.showProgress || pbar->is_completed())
+    {
+        return;
+    }
+
+    const size_t totalFiles = fileIterator->getTotalFilesCount();
+    const double progress = 100.0 * static_cast<double>(filesProcessed) / static_cast<double>(totalFiles);
+
+    // Calculate performance metrics
+    const auto currentTime = std::chrono::high_resolution_clock::now();
+    const auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(currentTime - startTime).count();
+    const double filesPerSecond = (filesProcessed > 0 && elapsed > 0) ?
+        static_cast<double>(filesProcessed) / static_cast<double>(elapsed) : 0.0;
+
+    // Update progress bar
+    const std::string postfixText = std::to_string(filesPerSecond) + " ファイル/s | 項目：" + std::to_string(entriesProcessed);
+    pbar->set_option(indicators::option::PostfixText{postfixText});
+
+    // Set progress (avoid 100% until completely done)
+    if (progress >= 100.0)
+    {
+        pbar->set_progress(99);
+    }
+    else
+    {
+        pbar->set_progress(progress);
+    }
+}
+
 
 int Parser::processBatch(const std::vector<std::filesystem::path>& filePaths)
 {
@@ -189,8 +199,10 @@ int Parser::processBatch(const std::vector<std::filesystem::path>& filePaths)
         if (const int entriesFromFile = processFile(filePath); entriesFromFile > 0)
         {
             batchEntriesProcessed += entriesFromFile;
-            filesProcessed++;
         }
+
+        // Update progress after each file (regardless of success/failure)
+        filesProcessed++;
     }
 
     return batchEntriesProcessed;

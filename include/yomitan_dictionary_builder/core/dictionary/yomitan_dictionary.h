@@ -29,12 +29,6 @@ public:
     friend glz::meta<DicEntry>;
 
     /**
-     * Simple constructor to create a dictionary with just a title
-     * @param dictionaryName The title of the dictionary
-     */
-    explicit YomitanDictionary(std::string_view dictionaryName);
-
-    /**
      * Creates a new Yomitan dictionary with the given configuration
      * @param config
      */
@@ -111,6 +105,7 @@ private:
     std::filesystem::path tempDir;
     std::vector<std::unique_ptr<DicEntry>> currentChunk;
     size_t totalEntries = 0;
+    int currentTermBankNumber;
 };
 
 struct DictionaryIndex

@@ -5,7 +5,7 @@
 
 namespace YDP
 {
-    class Parser : public ::Parser
+    class Parser final : public ::Parser
     {
     public:
 

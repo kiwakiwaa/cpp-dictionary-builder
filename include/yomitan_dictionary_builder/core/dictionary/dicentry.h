@@ -26,21 +26,76 @@ class DicEntry {
 public:
 	friend glz::meta<DicEntry>;
 
+	/**
+	 * Creates a new dictionary entry with a specified term and reading
+	 * @param term The term of the entry
+	 * @param reading The reading of the entry
+	 */
 	explicit DicEntry(const std::string& term, const std::string& reading);
 
+	/**
+	 * Appends a new HTML element to the entry contents
+	 * @param element Pointer to the HTML element to add
+	 */
 	void addElement(const std::shared_ptr<HTMLElement>& element);
 
+	/**
+	 * Sets the info tag for the entry
+	 * @param infoTag The info tag
+	 */
 	void setInfoTag(const std::string& infoTag);
+
+	/**
+	 * Sets the part-of-speech tag for the entry
+	 * @param posTag The part-of-speech tag
+	 */
 	void setPosTag(const std::string& posTag);
+
+	/**
+	 * Sets the search rank for the entry (negative values are rarer)
+	 * @param searchRank The search rank
+	 */
 	void setSearchRank(int searchRank);
+
+	/**
+	 * Sets the sequence number for the entry
+	 * @param sequenceNumber The sequence number
+	 */
 	void setSequenceNumber(long sequenceNumber);
 
+	/**
+	 * Gets the info tag for the entry
+	 * @return The info tag
+	 */
 	std::string getInfoTag() const;
+
+	/**
+	 * Gets the part-of-speech tag for the entry
+	 * @return The part-of-speech tag
+	 */
 	std::string getPosTag() const;
+
+	/**
+	 * Gets the search rank of the entry (negative values are rarer)
+	 * @return The search rank
+	 */
 	int getSearchRank() const;
+
+	/**
+	 * Gets the sequence number of the entry
+	 * @return The sequence number
+	 */
 	long getSequenceNumber() const;
 
+	/**
+	 * Creates a yomitan structured content entry struct for the entry
+	 * @return Struct containing all the entry fields
+	 */
 	[[nodiscard]] DicEntryFormat toList() const;
+
+	/**
+	 * Prints the full content of the entry in json format
+	 */
 	void printContent() const;
 	
 private:

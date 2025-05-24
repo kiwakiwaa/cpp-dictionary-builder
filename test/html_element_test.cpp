@@ -3,7 +3,9 @@
 
 TEST(HTMLElementTest, CreateElement)
 {
-    const auto validElement = createHtmlElement("span", "test content", "maps.apple.com");
+    auto validElement = std::make_shared<HTMLElement>("span", "test content");
+    validElement->setHref("maps.apple.com");
+
     EXPECT_EQ(validElement->getTag(), "span");
     EXPECT_EQ(validElement->getHref(), "maps.apple.com");
 
