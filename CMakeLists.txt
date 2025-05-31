@@ -26,8 +26,17 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-file(GLOB_RECURSE parser_headers "include/yomitan_dictionary_builder/parsers/*/parser.h")
-file(GLOB_RECURSE parser_sources "src/parsers/*/parser.cpp")
+# yaml cpp
+include(FetchContent)
+
+FetchContent_Declare(
+        yaml-cpp
+        GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+)
+FetchContent_MakeAvailable(yaml-cpp)
+
+file(GLOB_RECURSE parser_headers "include/yomitan_dictionary_builder/parsers/*/*.h")
+file(GLOB_RECURSE parser_sources "src/parsers/*/*.cpp")
 
 add_library(yomitan_dictionary_builder_lib STATIC
         ${parser_sources}
@@ -36,11 +45,19 @@ add_library(yomitan_dictionary_builder_lib STATIC
         src/core/dictionary/dicentry.cpp
         src/core/dictionary/html_element.cpp
         src/core/dictionary/yomitan_dictionary.cpp
+        src/core/base_parser.cpp
         src/core/xml_parser.cpp
-        src/core/parser.cpp
+        src/core/yomitan_parser.cpp
         src/utils/jptools/kanji_utils.cpp
         src/utils/jptools/kana_convert.cpp
         src/index/index_reader.cpp
+        src/index/jukugo_index_reader.cpp
+        src/strategies/key/mdict_link_handling_strategy.cpp
+        src/strategies/key/kjt_extraction_strategy.cpp
+        src/config/strategy_factory.cpp
+        src/parsers/MDict/subitem_processor.cpp
+        src/parsers/MDict/mdict_exporter.cpp
+        src/core/asset_manager.cpp
         lib/pugixml.cpp
 )
 
@@ -49,6 +66,7 @@ target_include_directories(yomitan_dictionary_builder_lib PUBLIC
         $<INSTALL_INTERFACE:include>
         lib
         ${glaze_SOURCE_DIR}/include
+        ${yaml-cpp_SOURCE_DIR}/include
 )
 
 # Main Executable
@@ -57,6 +75,7 @@ add_executable(yomitan_dictionary_builder src/main.cpp)
 target_link_libraries(yomitan_dictionary_builder PRIVATE
         yomitan_dictionary_builder_lib
         glaze::glaze
+        yaml-cpp::yaml-cpp
 )
 
 # Tests executable

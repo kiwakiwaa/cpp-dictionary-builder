@@ -1,207 +1,224 @@
 #include "yomitan_dictionary_builder/config/config_loader.h"
+#include "yomitan_dictionary_builder/config/strategy_factory.h"
+#include <stdexcept>
 
-#include <fstream>
-#include <iostream>
-#include <sstream>
-
-ConfigLoader ConfigLoader::loadFromFile(std::string_view filePath)
+ConfigLoader ConfigLoader::loadFromFile(const std::filesystem::path& filePath)
 {
-    ConfigLoader configLoader;
-    const auto configPath = std::filesystem::current_path().parent_path() / filePath;
+    ConfigLoader loader;
+    loader.basePath_ = std::filesystem::current_path().parent_path();
 
-    std::ifstream file(configPath);
-    if (!file.is_open()) {
-        throw std::runtime_error("Could not open config file: " + std::string(filePath));
-    }
-
-    std::string line;
-    std::string currentDict;
-    enum class Section { NONE, GENERAL, YOMITAN_CONFIG, PARSER_CONFIG };
-    auto currentSection = Section::NONE;
-
-    // Default values from general section
-    YomitanDictionaryConfig defaultYomitanConfig;
-    ParserConfig defaultParserConfig;
-
-    while (std::getline(file, line))
+    try
     {
-        // Skip empty lines and comments
-        if (line.empty() || line[0] == '#') {
-            continue;
-        }
+        YAML::Node config = YAML::LoadFile((loader.basePath_ / filePath).string());
 
-        // General section (root level)
-        if (line == "general:") {
-            currentSection = Section::GENERAL;
-            currentDict.clear();
-            continue;
-        }
-
-        // Dictionaries section (root level)
-        if (line == "dictionaries:") {
-            currentSection = Section::NONE;
-            continue;
-        }
-
-        // General section properties (2 spaces)
-        if (currentSection == Section::GENERAL && line.starts_with(TWO_SPACES) && !line.starts_with(FOUR_SPACES) &&
-            line.find(':') != std::string::npos)
+        if (config["general"])
         {
-            size_t colonPos = line.find(':');
-            std::string key = line.substr(2, colonPos - 2);
-            std::string value = line.substr(colonPos + 2); // skip ": "
-
-            // Remove quotes if present
-            if (value.size() >= 2 && value.front() == '"' && value.back() == '"') {
-                value = value.substr(1, value.size() - 2);
-            }
-
-            // Handle general settings
-            if (key == "author") {
-                defaultYomitanConfig.author = value;
-            } else if (key == "showProgress") {
-                defaultParserConfig.showProgress = value == "true";
-            } else if (key == "parsingBatchSize") {
-                defaultParserConfig.parsingBatchSize = std::stoi(value);
-            }
-            continue;
+            loader.loadGeneralConfig(config["general"]);
         }
 
-        // Dictionary name (2 spaces)
-        if (line.starts_with(TWO_SPACES) && !line.starts_with(FOUR_SPACES) && line.find(':') != std::string::npos)
+        if (config["dictionaries"])
         {
-            currentDict = line.substr(2, line.find(':') - 2);
-            currentSection = Section::NONE;
-            defaultParserConfig.dictionaryType = currentDict;
-
-            // Initialise with default values
-            configLoader.dictionaries_[currentDict] = DictionaryConfigPair{
-                defaultYomitanConfig,
-                defaultParserConfig
-            };
-            continue;
+            loader.loadDictionaries(config["dictionaries"]);
         }
 
-        // Section headers (4 spaces)
-        if (line.starts_with(FOUR_SPACES) && !line.starts_with(SIX_SPACES) &&
-            line.find(':') != std::string::npos && !currentDict.empty())
-        {
-            std::string sectionName = line.substr(4, line.find(':') - 4);
-
-            if (sectionName == "YomitanDictionaryConfig") {
-                currentSection = Section::YOMITAN_CONFIG;
-            } else if (sectionName == "ParserConfig") {
-                currentSection = Section::PARSER_CONFIG;
-            } else {
-                currentSection = Section::NONE;
-            }
-            continue;
-        }
-
-        // Property values (6 spaces)
-        if (line.starts_with(SIX_SPACES) && !line.starts_with(EIGHT_SPACES) &&
-            line.find(':') != std::string::npos && !currentDict.empty())
-        {
-            size_t colonPos = line.find(':');
-            std::string key = line.substr(6, colonPos - 6);
-            std::string value = line.substr(colonPos + 2); // skip ": "
-
-            // Remove quotes if present
-            if (value.size() >= 2 && value.front() == '"' && value.back() == '"') {
-                value = value.substr(1, value.size() - 2);
-            }
-
-            // Parse based on current section
-            if (currentSection == Section::YOMITAN_CONFIG) {
-                auto& yomitanConfig = configLoader.dictionaries_[currentDict].yomitanConfig;
-
-                if (key == "title")
-                    yomitanConfig.title = value;
-                else if (key == "author")
-                    yomitanConfig.author = value;
-                else if (key == "url")
-                    yomitanConfig.url = value;
-                else if (key == "description")
-                    yomitanConfig.description = value;
-                else if (key == "attribution")
-                    yomitanConfig.attribution = value;
-                else if (key == "revision")
-                    yomitanConfig.revision = value;
-                else if (key == "format")
-                    yomitanConfig.format = std::stoi(value);
-                else if (key == "chunk_size")
-                    yomitanConfig.CHUNK_SIZE = std::stol(value);
-                else if (key == "formatPretty")
-                    yomitanConfig.formatPretty = value == "true";
-                else if (key == "tempDir")
-                    yomitanConfig.tempDir = value;
-            }
-            else if (currentSection == Section::PARSER_CONFIG) {
-                auto& parserConfig = configLoader.dictionaries_[currentDict].parserConfig;
-
-                if (key == "linkStrategyType")
-                    parserConfig.linkStrategyType = value;
-                else if (key == "imageStrategyType")
-                    parserConfig.imageStrategyType = value;
-                else if (key == "dictionaryPath")
-                    parserConfig.dictionaryPath = std::filesystem::current_path().parent_path() / value;
-                else if (key == "tagMappingPath")
-                    parserConfig.tagMappingPath = std::filesystem::current_path().parent_path() / value;
-                else if (key == "indexPath")
-                    parserConfig.indexPath = std::filesystem::current_path().parent_path() / value;
-                else if (key == "jmdictPath")
-                    parserConfig.jmdictPath = std::filesystem::current_path().parent_path() / value;
-                else if (key == "audioPath")
-                    parserConfig.audioPath = std::filesystem::current_path().parent_path() / value;
-                else if (key == "appendixPath")
-                    parserConfig.appendixPath = std::filesystem::current_path().parent_path() / value;
-                else if (key == "ignoredElements")
-                    parserConfig.ignoredElements = parseSimpleSet(value);
-                else if (key == "expressionElement")
-                    parserConfig.expressionElement = value;
-                else if (key == "parseAllLinks")
-                    parserConfig.parseAllLinks = value == "true";
-                else if (key == "showProgress")
-                    parserConfig.showProgress = value == "true";
-                else if (key == "parsingBatchSize")
-                    parserConfig.parsingBatchSize = std::stoi(value);
-            }
-        }
     }
-    return configLoader;
+    catch (const YAML::Exception& e)
+    {
+        throw std::runtime_error("YAML parsing error: " + std::string(e.what()));
+    }
+
+    return loader;
 }
 
+void ConfigLoader::loadGeneralConfig(const YAML::Node& generalNode)
+{
+    if (generalNode["author"])
+    {
+        const std::string author = generalNode["author"].as<std::string>();
+        defaultYomitanConfig_.author = author;
+        defaultMDictConfig_.author = author;
+    }
 
-DictionaryConfigPair ConfigLoader::getDictionaryInfo(const std::string& dictName) const
+    if (generalNode["showProgress"])
+    {
+        defaultParserConfig_.showProgress = generalNode["showProgress"].as<bool>();
+    }
+
+    if (generalNode["parsingBatchSize"])
+    {
+        defaultParserConfig_.parsingBatchSize = generalNode["parsingBatchSize"].as<int>();
+    }
+}
+
+void ConfigLoader::loadDictionaries(const YAML::Node& dictionariesNode)
+{
+    for (const auto& dictPair : dictionariesNode)
+    {
+        const std::string dictName = dictPair.first.as<std::string>();
+        DictionaryConfigPair config = parseDictionaryConfig(dictPair.second);
+        config.parserConfig.dictionaryType = dictName;
+        dictionaries_[dictName] = std::move(config);
+    }
+}
+
+DictionaryConfigPair ConfigLoader::parseDictionaryConfig(const YAML::Node& dictNode) const
+{
+    DictionaryConfigPair config;
+
+    // Start with defaults
+    config.yomitanConfig = defaultYomitanConfig_;
+    config.mDictConfig = defaultMDictConfig_;
+    config.parserConfig = defaultParserConfig_;
+
+    // Override with specific configs
+    if (dictNode["YomitanDictionaryConfig"])
+    {
+        const auto yomitanConfig = parseYomitanConfig(dictNode["YomitanDictionaryConfig"]);
+        if (!yomitanConfig.title.empty()) config.yomitanConfig.title = yomitanConfig.title;
+        if (!yomitanConfig.author.empty()) config.yomitanConfig.author = yomitanConfig.author;
+        if (!yomitanConfig.url.empty()) config.yomitanConfig.url = yomitanConfig.url;
+        if (!yomitanConfig.description.empty()) config.yomitanConfig.description = yomitanConfig.description;
+        if (!yomitanConfig.attribution.empty()) config.yomitanConfig.attribution = yomitanConfig.attribution;
+        if (!yomitanConfig.revision.empty()) config.yomitanConfig.revision = yomitanConfig.revision;
+        if (!yomitanConfig.CHUNK_SIZE) config.yomitanConfig.CHUNK_SIZE = yomitanConfig.CHUNK_SIZE;
+    }
+
+    if (dictNode["MDictConfig"])
+    {
+        const auto mdictConfig = parseMDictConfig(dictNode["MDictConfig"]);
+        // Merge with defaults
+        if (!mdictConfig.title.empty()) config.mDictConfig.title = mdictConfig.title;
+        if (!mdictConfig.author.empty()) config.mDictConfig.author = mdictConfig.author;
+        if (!mdictConfig.appendixLinkIdentifier.empty()) config.mDictConfig.appendixLinkIdentifier = mdictConfig.appendixLinkIdentifier;
+        if (!mdictConfig.subElement.empty()) config.mDictConfig.subElement = mdictConfig.subElement;
+    }
+
+    if (dictNode["ParserConfig"])
+    {
+        const auto parserConfig = parseParserConfig(dictNode["ParserConfig"]);
+        // Merge with defaults - this is more complex due to optionals
+        config.parserConfig = parserConfig; // For now, simple override
+    }
+
+    return config;
+}
+
+YomitanDictionaryConfig ConfigLoader::parseYomitanConfig(const YAML::Node& node)
+{
+    YomitanDictionaryConfig config = {};
+
+    if (node["title"]) config.title = node["title"].as<std::string>();
+    if (node["author"]) config.author = node["author"].as<std::string>();
+    if (node["url"]) config.url = node["url"].as<std::string>();
+    if (node["description"]) config.description = node["description"].as<std::string>();
+    if (node["attribution"]) config.attribution = node["attribution"].as<std::string>();
+    if (node["revision"]) config.revision = node["revision"].as<std::string>();
+    if (node["format"]) config.format = node["format"].as<int>();
+    if (node["chunk_size"]) config.CHUNK_SIZE = node["chunk_size"].as<long>();
+    if (node["formatPretty"]) config.formatPretty = node["formatPretty"].as<bool>();
+    if (node["tempDir"]) config.tempDir = node["tempDir"].as<std::string>();
+
+    return config;
+}
+
+MDictConfig ConfigLoader::parseMDictConfig(const YAML::Node& node)
+{
+    MDictConfig config;
+
+    if (node["title"]) config.title = node["title"].as<std::string>();
+    if (node["author"]) config.author = node["author"].as<std::string>();
+    if (node["appendixLinkIdentifier"]) config.appendixLinkIdentifier = node["appendixLinkIdentifier"].as<std::string>();
+    if (node["subElement"]) config.subElement = node["subElement"].as<std::string>();
+
+    return config;
+}
+
+ParserConfig ConfigLoader::parseParserConfig(const YAML::Node& node) const
+{
+    ParserConfig config = defaultParserConfig_; // Start with defaults
+
+    if (node["mDictLinkStrategyType"])
+    {
+        config.linkStrategyType = node["mDictLinkStrategyType"].as<std::string>();
+        config.createMDictLinkStrategy = [strategyType = config.linkStrategyType](const MDictConfig& mDictConfig) {
+            return MDictLinkStrategyFactory::getInstance().create(strategyType, mDictConfig);
+        };
+    }
+    else //default
+    {
+        config.createMDictLinkStrategy = [](const MDictConfig& mDictConfig) {
+            return MDictLinkStrategyFactory::getInstance().create("mdict", mDictConfig);
+        };
+    }
+
+    if (node["keyExtractionStrategy"])
+    {
+        const std::string strategyType = node["keyExtractionStrategy"].as<std::string>();
+        config.createKeyExtractionStrategy = [strategyType]() {
+            return KeyExtractionStrategyFactory::getInstance().create(strategyType);
+        };
+    }
+    else
+    {
+        config.createKeyExtractionStrategy = []() {
+            return KeyExtractionStrategyFactory::getInstance().create("default");
+        };
+    }
+
+    // Paths
+    if (node["dictionaryPath"]) config.dictionaryPath = resolvePath(node["dictionaryPath"].as<std::string>());
+    if (node["tagMappingPath"]) config.tagMappingPath = resolvePath(node["tagMappingPath"].as<std::string>());
+    if (node["indexPath"]) config.indexPath = resolvePath(node["indexPath"].as<std::string>());
+    if (node["jmdictPath"]) config.jmdictPath = resolvePath(node["jmdictPath"].as<std::string>());
+    if (node["audioPath"]) config.audioPath = resolvePath(node["audioPath"].as<std::string>());
+    if (node["appendixPath"]) config.appendixPath = resolvePath(node["appendixPath"].as<std::string>());
+    if (node["outputPath"]) config.outputPath = resolvePath(node["outputPath"].as<std::string>());
+    if (node["assetDirectory"]) config.assetDirectory = resolvePath(node["assetDirectory"].as<std::string>());
+    if (node["cssDirectory"]) config.cssDirectory = resolvePath(node["cssDirectory"].as<std::string>());
+    if (node["descriptionPath"]) config.descriptionPath = resolvePath(node["descriptionPath"].as<std::string>());
+    if (node["iconPath"]) config.iconPath = resolvePath(node["iconPath"].as<std::string>());
+
+    // Optional features
+    if (node["ignoredElements"])
+    {
+        std::set<std::string> elements;
+        for (const auto& elem : node["ignoredElements"])
+        {
+            elements.insert(elem.as<std::string>());
+        }
+        config.ignoredElements = elements;
+    }
+
+    if (node["expressionElement"]) config.expressionElement = node["expressionElement"].as<std::string>();
+    if (node["parseAllLinks"]) config.parseAllLinks = node["parseAllLinks"].as<bool>();
+    if (node["showProgress"]) config.showProgress = node["showProgress"].as<bool>();
+    if (node["parsingBatchSize"]) config.parsingBatchSize = node["parsingBatchSize"].as<int>();
+
+    return config;
+}
+
+std::filesystem::path ConfigLoader::resolvePath(const std::string& path) const
+{
+    return basePath_ / path;
+}
+
+DictionaryConfigPair ConfigLoader::getDictionaryConfig(const std::string& dictName) const
 {
     const auto it = dictionaries_.find(dictName);
-    if (it == dictionaries_.end()) {
+    if (it == dictionaries_.end())
+    {
         throw std::runtime_error("Dictionary not found: " + dictName);
     }
     return it->second;
 }
 
-
-std::set<std::string> ConfigLoader::parseSimpleSet(const std::string& input) {
-    std::set<std::string> result;
-
-    if (input.empty() || input.front() != '{' || input.back() != '}') {
-        return result;
+std::vector<std::string> ConfigLoader::getAvailableDictionaries() const
+{
+    std::vector<std::string> names;
+    names.reserve(dictionaries_.size());
+    for (const auto &name: dictionaries_ | std::views::keys)
+    {
+        names.push_back(name);
     }
-
-    const std::string content = input.substr(1, input.size() - 2);
-
-    std::stringstream ss(content);
-    std::string item;
-    while (std::getline(ss, item, ',')) {
-        std::erase_if(item, [](const char c) {
-            return std::isspace(c) || c == '"';
-        });
-
-        if (!item.empty()) {
-            result.insert(item);
-        }
-    }
-
-    return result;
+    return names;
 }

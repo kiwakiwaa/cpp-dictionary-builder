@@ -1,10 +1,9 @@
 #ifndef XML_PARSER_H
 #define XML_PARSER_H
 
+#include "yomitan_dictionary_builder/core/base_parser.h"
 #include "yomitan_dictionary_builder/core/dictionary/yomitan_dictionary.h"
-#include "yomitan_dictionary_builder/config/parser_config.h"
-#include "yomitan_dictionary_builder/utils/file_utils.h"
-#include "indicators.h"
+#include "yomitan_dictionary_builder/index/index_reader.h"
 
 #include <string>
 #include <unordered_set>
@@ -14,13 +13,13 @@ const std::unordered_set<std::string_view> ignoredAttributes = {
     "rel", "http-equiv", "xmlns", "hmhtml", "content", "media", "alt", "rowspan"
 };
 
-class XMLParser
+class XMLParser : public BaseParser
 {
 public:
 
     explicit XMLParser(const ParserConfig& config);
 
-    virtual ~XMLParser() = default;
+protected:
 
     /**
      *
@@ -51,18 +50,14 @@ public:
      */
     static std::unordered_map<std::string, std::string> getAttributeData(const pugi::xml_node& node);
 
-    //HTMLElement& handleLinkElement(/*elementTag, list of elements, class list, data attributes*/);
-    //HTMLElement& handleImageElement(/*elementTag, list of elements, class list, data attributes*/);
-
     /**
      * Recursively converts XML structure to Yomitan compatible format
      * @param node The XML node
      * @param ignoreExpressions Whether to ignore elements specified as expression elements
      * @return Shared to the HTML element
      */
-     [[nodiscard]] std::shared_ptr<HTMLElement> convertElementToYomitan(const pugi::xml_node& node, bool ignoreExpressions = false) const;
+    [[nodiscard]] std::shared_ptr<HTMLElement> convertElementToYomitan(const pugi::xml_node& node, bool ignoreExpressions = false) const;
 
-protected:
     /**
      * Gets the stripped text contents of an XML element
      * @param node The XML node to strip
@@ -71,16 +66,16 @@ protected:
      */
     static std::string getElementText(const pugi::xml_node& node, const std::optional<std::set<std::string>>& ignoredElements = std::nullopt);
 
+    std::unique_ptr<IndexReader> indexReader;
+
+private:
     /**
      * Loads the tag mapping for a dictionary from a specified path
      * @param filePath The path to the json file
      */
     void loadTagMapping(const std::filesystem::path& filePath);
 
-    std::unique_ptr<indicators::ProgressBar> pbar;
-    ParserConfig config;
     std::unordered_map<std::string, std::string> tagMapping;
-
     bool hasParentSelectors = false;
 };
 

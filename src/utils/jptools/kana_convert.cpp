@@ -1,6 +1,8 @@
 #include "yomitan_dictionary_builder/utils/jptools/kana_convert.h"
 
 #include <unordered_map>
+#include <iostream>
+#include <functional>
 
 namespace KanaConvert
 {
@@ -204,5 +206,60 @@ namespace KanaConvert
 
         // return utf8
         return KanjiUtils::utf32ToUtf8(result);
+    }
+
+    std::vector<std::string> normalizeKeys(const std::vector<std::string> &keys, const std::string_view context)
+    {
+        if (keys.empty())
+            return {};
+
+        if (keys.size() == 100'000)
+            std::cerr << "Warning: Very large key set (" << keys.size() << ")" << std::endl;
+
+        std::vector<std::string> normalizedKeys;
+
+        try
+        {
+            normalizedKeys.reserve(keys.size());
+            std::function<std::string(const std::string&)> convertFunction;
+
+            if (KanjiUtils::isKanjiString(context))
+                convertFunction = katakanaToHiragana;
+            else if (KanjiUtils::containsKatakana(context))
+                convertFunction = hiraganaToKatakana;
+            else
+                convertFunction = katakanaToHiragana;
+
+            for (size_t i = 0; i < keys.size(); ++i)
+            {
+                try
+                {
+                    std::string normalized = convertFunction(keys[i]);
+                    normalizedKeys.emplace_back(normalized);
+                }
+                catch (const std::bad_alloc& e)
+                {
+                    std::cerr << "Memory allocation failed normalising key " << i << ": " << keys[i]
+                                << " Error: " << e.what() << std::endl;
+                }
+                catch (const std::exception& e)
+                {
+                    std::cerr << "Error normalising key " << i << ": " << keys[i]
+                                << " Error: " << e.what() << std::endl;
+                }
+            }
+        }
+        catch (const std::bad_alloc& e)
+        {
+            std::cerr << "Failed to reserve memory for " << keys.size() << " normalised keys" << std::endl;
+            throw;
+        }
+        catch (const std::exception& e)
+        {
+            std::cerr << "Error in normalizeKeys: " << e.what() << std::endl;
+            throw;
+        }
+
+        return normalizedKeys;
     }
 }

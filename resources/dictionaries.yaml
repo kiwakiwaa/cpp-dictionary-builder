@@ -13,9 +13,46 @@ dictionaries:
     ParserConfig:
       dictionaryPath: "resources/parsers/YDP/pages"
       indexPath: "resources/parsers/YDP/index/index_d.tsv"
-  Daijisen:
-    YomitanDictionaryConfig:
-      title: "大辞泉"
+
+  RGKA9:
+    MDictConfig:
+      title: "例解学習漢字辞典［第九版］"
+      appendixLinkIdentifier: "appendix/"
+      subElement: "SubItem"
     ParserConfig:
-      dictionaryPath: "resources/parsers/DAIJISEN/pages"
-      ignoredElements: {"entry-index", "whatever"}
+      dictionaryPath: "resources/parsers/RGKA9/pages"
+      descriptionPath: "resources/parsers/RGKA9/description.html"
+      indexPath: "resources/parsers/RGKA9/index/index_d.tsv"
+      assetDirectory: "resources/parsers/RGKA9/assets"
+      cssDirectory: "resources/parsers/RGKA9/style"
+      iconPath: "resources/parsers/RGKA9/例解学習漢字辞典［第九版］.png"
+      outputPath: "converted/例解学習漢字辞典［第九版］"
+
+  KJT:
+    MDictConfig:
+      title: "旺文社漢字典［第四版］"
+      appendixLinkIdentifier: "index/"
+      subElement: "SubItem"
+    ParserConfig:
+      dictionaryPath: "resources/parsers/KJT/pages"
+      descriptionPath: "resources/parsers/KJT/description.html"
+      indexPath: "resources/parsers/KJT/index/index_d.tsv"
+      assetDirectory: "resources/parsers/KJT/assets"
+      cssDirectory: "resources/parsers/KJT/style"
+      iconPath: "resources/parsers/KJT/旺文社漢字典［第四版］.png"
+      outputPath: "converted/（MDX）旺文社漢字典"
+      mDictLinkStrategyType: "mdict"
+      keyExtractionStrategy: "kjt"
+
+  NHKACCENT2:
+    MDictConfig:
+      title: "NHK日本語発音アクセント新辞典"
+      appendixLinkIdentifier: "appendix/"
+    ParserConfig:
+      dictionaryPath: "resources/parsers/NHKACCENT2/pages"
+      descriptionPath: "resources/parsers/NHKACCENT2/description.html"
+      indexPath: "resources/parsers/NHKACCENT2/index/headword_d.tsv"
+      assetDirectory: "resources/parsers/NHKACCENT2/assets"
+      cssDirectory: "resources/parsers/NHKACCENT2/style"
+      iconPath: "resources/parsers/NHKACCENT2/NHK日本語発音アクセント新辞典.png"
+      outputPath: "converted/NHK日本語発音アクセント新辞典"

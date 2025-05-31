@@ -36,6 +36,8 @@
 *.app
 
 
+converted/**
+
 # Ignore everything in resources/
 resources/**
 

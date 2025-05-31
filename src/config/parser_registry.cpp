@@ -1,4 +1,4 @@
-#include "yomitan_dictionary_builder/parsers/YDP/parser.h"
+#include "yomitan_dictionary_builder/parsers/YDP/yomitan_parser.h"
 
 #include "yomitan_dictionary_builder/config/parser_registry.h"
 
@@ -19,12 +19,12 @@ void ParserRegistry::registerAllParsers()
     auto& registry = getInstance();
 
     registry.registerParser("YDP", [](std::unique_ptr<YomitanDictionary> dict, const ParserConfig& config) {
-        return std::make_unique<YDP::Parser>(std::move(dict), config);
+        return std::make_unique<YDP::YomitanParser>(std::move(dict), config);
     });
 }
 
 
-std::unique_ptr<Parser> ParserRegistry::createParser(const std::string &type,
+std::unique_ptr<YomitanParser> ParserRegistry::createParser(const std::string &type,
     std::unique_ptr<YomitanDictionary> dictionary,
     const ParserConfig &config)
 {

@@ -4,10 +4,7 @@
 #include <string_view>
 #include <vector>
 #include <unordered_map>
-#include <fstream>
-#include <filesystem>
 #include <sstream>
-#include <iostream>
 
 class IndexReader
 {

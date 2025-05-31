@@ -1,7 +1,7 @@
 #ifndef PARSER_REGISTRY_H
 #define PARSER_REGISTRY_H
 
-#include "yomitan_dictionary_builder/core/parser.h"
+#include "yomitan_dictionary_builder/core/yomitan_parser.h"
 #include "yomitan_dictionary_builder/config/parser_config.h"
 #include <memory>
 #include <unordered_map>
@@ -11,7 +11,7 @@
 
 class ParserRegistry {
 public:
-    using ParserCreator = std::function<std::unique_ptr<Parser>(
+    using ParserCreator = std::function<std::unique_ptr<YomitanParser>(
         std::unique_ptr<YomitanDictionary>,
         const ParserConfig&
     )>;
@@ -41,7 +41,7 @@ public:
      * @param config The parser config
      * @return
      */
-    std::unique_ptr<Parser> createParser(
+    std::unique_ptr<YomitanParser> createParser(
         const std::string& type,
         std::unique_ptr<YomitanDictionary> dictionary,
         const ParserConfig& config

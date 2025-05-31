@@ -2,59 +2,13 @@
 #include <sstream>
 
 
-XMLParser::XMLParser(const ParserConfig& config) : config(config)
+XMLParser::XMLParser(const ParserConfig& config) : BaseParser(config)
 {
-    if (config.showProgress)
-    {
-        pbar = std::make_unique<indicators::ProgressBar>(
-            indicators::option::BarWidth{40},
-            indicators::option::Start{"【"},
-            indicators::option::Fill{"█"},
-            indicators::option::Lead{"█"},
-            indicators::option::Remainder{"-"},
-            indicators::option::End{"】"},
-            indicators::option::ForegroundColor{indicators::Color::magenta},
-            indicators::option::ShowPercentage{true},
-            indicators::option::ShowElapsedTime{true},
-            indicators::option::FontStyles{std::vector{indicators::FontStyle::bold}}
-        );
-    }
-
     if (config.tagMappingPath.has_value())
     {
         loadTagMapping(config.tagMappingPath.value());
     }
-}
-
-
-void XMLParser::loadTagMapping(const std::filesystem::path &filePath)
-{
-    if (!this->config.tagMappingPath.has_value())
-        return;
-
-    const auto json = FileUtils::readFile(this->config.tagMappingPath.value());
-    if (!json.has_value())
-        return;
-
-    try
-    {
-        if (const auto ec = glz::read_json(this->tagMapping, json.value()))
-            std::cerr << "Error reading tag map: " << glz::format_error(ec, json.value()) << std::endl;
-
-        // Check if there are any parent selectors in the tag mapping
-        // to avoid unecessary recursion when getting tags later
-        auto predicate = [](const std::string& s) {
-            return s.contains('.') || s.contains(' ');
-        };
-
-        if (std::ranges::any_of(tagMapping | std::views::keys, predicate)) {
-            hasParentSelectors = true;
-        }
-    }
-    catch (const std::exception& e)
-    {
-        std::cerr << "Error reading tag map: " << e.what() << std::endl;
-    }
+    this->indexReader = config.indexPath.has_value() ? std::make_unique<IndexReader>(config.indexPath.value().string()) : nullptr;
 }
 
 
@@ -73,7 +27,7 @@ std::string XMLParser::getTargetTag(
     thread_local std::string selectorBuffer;
 
     // Look for nested rules
-    if (parent.has_value())
+    if (hasParentSelectors && parent.has_value())
     {
         const auto& parentNode = parent.value();
         const char* parentName = parentNode.name();
@@ -286,4 +240,35 @@ std::string XMLParser::getElementText(const pugi::xml_node& node, const std::opt
         }
     }
     return collectedText;
+}
+
+
+void XMLParser::loadTagMapping(const std::filesystem::path &filePath)
+{
+    if (!this->config.tagMappingPath.has_value())
+        return;
+
+    const auto json = FileUtils::readFile(this->config.tagMappingPath.value());
+    if (!json.has_value())
+        return;
+
+    try
+    {
+        if (const auto ec = glz::read_json(this->tagMapping, json.value()))
+            std::cerr << "Error reading tag map: " << glz::format_error(ec, json.value()) << std::endl;
+
+        // Check if there are any parent selectors in the tag mapping
+        // to avoid unecessary recursion when getting tags later
+        auto predicate = [](const std::string& s) {
+            return s.contains('.') || s.contains(' ');
+        };
+
+        if (std::ranges::any_of(tagMapping | std::views::keys, predicate)) {
+            hasParentSelectors = true;
+        }
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Error reading tag map: " << e.what() << std::endl;
+    }
 }

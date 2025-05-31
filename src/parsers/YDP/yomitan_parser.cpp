@@ -1,10 +1,11 @@
-#include "yomitan_dictionary_builder/parsers/YDP/parser.h"
+#include "yomitan_dictionary_builder/parsers/YDP/yomitan_parser.h"
 #include "yomitan_dictionary_builder/utils/file_utils.h"
 #include "yomitan_dictionary_builder/utils/jptools/kanji_utils.h"
+#include "yomitan_dictionary_builder/utils/jptools/kana_convert.h"
 
 namespace YDP
 {
-    int Parser::processFile(const std::filesystem::path &filePath)
+    int YomitanParser::processFile(const std::filesystem::path &filePath)
     {
         int count = 0;
         const auto entryKeys = indexReader->getKeysForFile(filePath.stem().string());
@@ -17,7 +18,7 @@ namespace YDP
 
         const std::string headword = extractHeadword(doc.document_element());
 
-        const auto normalizedKeys = normalizeKeys(entryKeys, headword);
+        const auto normalizedKeys = KanaConvert::normalizeKeys(entryKeys, headword);
         const auto matchedKeys = KanjiUtils::matchKanaWithKanji(normalizedKeys);
 
         for (const auto& [kanjiPart, kanaPart] : matchedKeys)
@@ -49,7 +50,7 @@ namespace YDP
     }
 
 
-    std::string Parser::extractHeadword(const pugi::xml_node &node)
+    std::string YomitanParser::extractHeadword(const pugi::xml_node &node)
     {
         auto predicate = [](const pugi::xml_node &n) {
             return std::string(n.name()) == "headword" &&

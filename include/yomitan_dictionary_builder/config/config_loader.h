@@ -3,50 +3,47 @@
 
 #include "yomitan_dictionary_builder/config/parser_config.h"
 #include "yomitan_dictionary_builder/core/dictionary/yomitan_dictionary.h"
+#include "yomitan_dictionary_builder/parsers/MDict/mdict_config.h"
 
+#include <yaml-cpp/yaml.h>
 #include <unordered_map>
-#include <set>
-#include <string>
-#include <sstream>
+#include <filesystem>
 
-struct DictionaryConfigPair
-{
+struct DictionaryConfigPair {
     YomitanDictionaryConfig yomitanConfig;
+    MDictConfig mDictConfig;
     ParserConfig parserConfig;
 };
 
-struct GeneralConfig {
-    std::string author;
-    bool showProgress = false;
-    int parsingBatchSize = 100;
-};
-
-static constexpr std::string_view TWO_SPACES{"  "};
-static constexpr std::string_view FOUR_SPACES{"    "};
-static constexpr std::string_view SIX_SPACES{"      "};
-static constexpr std::string_view EIGHT_SPACES{"        "};
-
-class ConfigLoader
-{
+class ConfigLoader {
 public:
-    /**
-     * Loads the dictionary config yaml file and stores the information in a map
-     * @param filePath the path to the yaml file
-     * @return Config loader with the configuration for all available dictionaries
-     */
-    static ConfigLoader loadFromFile(std::string_view filePath);
+    static ConfigLoader loadFromFile(const std::filesystem::path& filePath);
 
-    /**
-     * Returns a pair of dictionary and parser config for a specified dictionary
-     * @param dictName The name of the dictionary
-     * @return DictionaryConfigPair containing both the dictionary config and the parser config
-     */
-    DictionaryConfigPair getDictionaryInfo(const std::string& dictName) const;
+    DictionaryConfigPair getDictionaryConfig(const std::string& dictName) const;
+    std::vector<std::string> getAvailableDictionaries() const;
+
 
 private:
-    static std::set<std::string> parseSimpleSet(const std::string& input);
+    ConfigLoader() = default;
+
+    void loadGeneralConfig(const YAML::Node& generalNode);
+    void loadDictionaries(const YAML::Node& dictionariesNode);
+    DictionaryConfigPair parseDictionaryConfig(const YAML::Node& dictNode) const;
+
+    static YomitanDictionaryConfig parseYomitanConfig(const YAML::Node& node);
+    static MDictConfig parseMDictConfig(const YAML::Node& node);
+    ParserConfig parseParserConfig(const YAML::Node& node) const;
+
+    std::filesystem::path resolvePath(const std::string& path) const;
 
     std::unordered_map<std::string, DictionaryConfigPair> dictionaries_;
+    std::filesystem::path basePath_;
+
+    // Default configs from general section
+    YomitanDictionaryConfig defaultYomitanConfig_;
+    MDictConfig defaultMDictConfig_;
+    ParserConfig defaultParserConfig_;
 };
+
 
 #endif

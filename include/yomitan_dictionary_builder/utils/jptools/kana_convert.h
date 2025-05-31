@@ -18,6 +18,14 @@ namespace KanaConvert
      * @return Text converted to hiragana
      */
     std::string katakanaToHiragana(std::string_view text);
+
+    /**
+     * Normalise reading keys
+     * @param keys Keys to normalise
+     * @param context Context extracted from the XML used for deciding how to normalise the keys
+     * @return Normalised keys
+     */
+    std::vector<std::string> normalizeKeys(const std::vector<std::string>& keys, std::string_view context);
 }
 
 #endif

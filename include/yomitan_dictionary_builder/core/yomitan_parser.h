@@ -1,18 +1,17 @@
-#ifndef PARSER_H
-#define PARSER_H
+#ifndef YOMITAN_PARSER_H
+#define YOMITAN_PARSER_H
 
 #include "yomitan_dictionary_builder/core/dictionary/yomitan_dictionary.h"
 #include "yomitan_dictionary_builder/config/parser_config.h"
 #include "yomitan_dictionary_builder/core/xml_parser.h"
-#include "yomitan_dictionary_builder/index/index_reader.h"
 #include "yomitan_dictionary_builder/utils/file_utils.h"
 
-class Parser : public XMLParser
+class YomitanParser : public XMLParser
 {
 public:
-    explicit Parser(std::unique_ptr<YomitanDictionary> dictionary, const ParserConfig& parserConfig);
+    explicit YomitanParser(std::unique_ptr<YomitanDictionary> dictionary, const ParserConfig& parserConfig);
 
-    ~Parser() override;
+    ~YomitanParser() override;
 
     /**
      * Parse a single dictionary entry
@@ -37,11 +36,6 @@ public:
         std::optional<bool> ignoreExpressions = std::nullopt
     ) const;
 
-    /**
-     * Parse all dictionary files in the configured path
-     * @return Number of entries parsed
-     */
-    int parse();
 
     /**
      * Export the dictionary to the specified path
@@ -51,25 +45,6 @@ public:
     [[nodiscard]] bool exportDictionary(std::string_view outputPath) const;
 
 protected:
-    /**
-     * Process a single file
-     * @param filePath XML file path
-     * @return Number of entries parsed from file
-     */
-    virtual int processFile(const std::filesystem::path& filePath) = 0;
-
-    /**
-     * Normalise reading keys
-     * @param keys Keys to normalise
-     * @param context Context extracted from the XML used for deciding how to normalise the keys
-     * @return Normalised keys
-     */
-    static std::vector<std::string> normalizeKeys(const std::vector<std::string>& keys, std::string_view context);
-
-    /**
-     * Updates the progress bar with current processing statistics
-     */
-    void updateProgress() const;
 
     /**
      * Get part-of-speech tags for a term
@@ -78,23 +53,9 @@ protected:
      */
     std::pair<std::string, std::string> getPartOfSpeechTags(std::string_view term);
 
-    std::unique_ptr<IndexReader> indexReader;
-
 private:
-    /**
-     * Parses a batch of files
-     * @param filePaths A vector of files to parse
-     * @return The number of entries added from the batch processing
-     */
-    int processBatch(const std::vector<std::filesystem::path>& filePaths);
 
-    std::unique_ptr<FileUtils::FileIterator> fileIterator;
     std::unique_ptr<YomitanDictionary> dictionary;
-
-    std::chrono::steady_clock::time_point startTime;
-    size_t batchSize{1};
-    int entriesProcessed{0};
-    int filesProcessed{0};
 };
 
 

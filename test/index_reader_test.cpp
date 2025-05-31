@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "yomitan_dictionary_builder/index/index_reader.h"
 
+#include <filesystem>
 #include <numeric>
 
 TEST(IndexReaderTest, TestLoadIndex)

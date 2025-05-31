@@ -1,4 +1,7 @@
 #include "yomitan_dictionary_builder/utils/jptools/kanji_utils.h"
+
+#include <algorithm>
+
 #include "utfcpp/utf8.h"
 
 #include <locale>
@@ -278,15 +281,16 @@ namespace KanjiUtils
             }
             
             if (has_kanji) {
-                kanji_entries.push_back(entry);
+                kanji_entries.emplace_back(entry);
             } else if (isHiraganaString(entry) || isKatakanaString(entry) || isHentaiganaString(entry)) {
-                kana_entries.push_back(entry);
+                kana_entries.emplace_back(entry);
             } else {
-                foreign_entries.push_back(entry);
+                foreign_entries.emplace_back(entry);
             }
         }
         
         // Handle foreign entries
+        results.reserve(foreign_entries.size());
         for (const auto& foreign : foreign_entries) {
             results.emplace_back(std::nullopt, std::optional(foreign));
         }
@@ -314,7 +318,7 @@ namespace KanjiUtils
         for (const auto& kana : kana_entries) {
             if (kana.size() >= 6) { // Ensure string is long enough for るる (6 bytes in UTF-8)
                 if (std::string suffix = kana.substr(kana.size() - 6); suffix == "るる") {
-                    ruru_kana.push_back(kana);
+                    ruru_kana.emplace_back(kana);
                 }
             }
         }
@@ -324,7 +328,7 @@ namespace KanjiUtils
             for (const auto& kanji : kanji_entries) {
                 if (kanji.size() >= 6) {
                     if (std::string suffix = kanji.substr(kanji.size() - 6); suffix == "るる") {
-                        ruru_kanji.push_back(kanji);
+                        ruru_kanji.emplace_back(kanji);
                     }
                 }
             }
@@ -340,15 +344,15 @@ namespace KanjiUtils
                 // Remove matched entries to prevent duplicate processing
                 std::vector<std::string> remaining_kana;
                 for (const auto& kana : kana_entries) {
-                    if (std::find(ruru_kana.begin(), ruru_kana.end(), kana) == ruru_kana.end()) {
-                        remaining_kana.push_back(kana);
+                    if (std::ranges::find(ruru_kana, kana) == ruru_kana.end()) {
+                        remaining_kana.emplace_back(kana);
                     }
                 }
                 
                 std::vector<std::string> remaining_kanji;
                 for (const auto& kanji : kanji_entries) {
                     if (std::find(ruru_kanji.begin(), ruru_kanji.end(), kanji) == ruru_kanji.end()) {
-                        remaining_kanji.push_back(kanji);
+                        remaining_kanji.emplace_back(kanji);
                     }
                 }
                 
@@ -383,7 +387,7 @@ namespace KanjiUtils
             // If there's no non-kanji part, use the entire string as a key
             std::string key = non_kanji_part.empty() ? kanji : utf32ToUtf8(non_kanji_part);
             
-            kanji_groups[key].push_back(kanji);
+            kanji_groups[key].emplace_back(kanji);
         }
         
         // Sets to track matched entries
@@ -392,8 +396,7 @@ namespace KanjiUtils
         
         // First pass: match kanji entries with exact non-kanji part matches
         for (const auto& [key, kanji_list] : kanji_groups) {
-            auto it = std::find(kana_entries.begin(), kana_entries.end(), key);
-            if (it != kana_entries.end()) {
+            if (auto it = std::find(kana_entries.begin(), kana_entries.end(), key); it != kana_entries.end()) {
                 // Found an exact match
                 for (const auto& kanji : kanji_list) {
                     results.emplace_back(std::optional(kanji), std::optional(key));
@@ -419,22 +422,21 @@ namespace KanjiUtils
                 }
                 
                 // Find the longest common ending
-                int common_length = longestCommonSuffix(kana, key);
 
                 // If we have a substantial match, and it's better than previous matches
-                if (common_length >= 1 && common_length > best_match_length) {
+                if (int common_length = longestCommonSuffix(kana, key); common_length >= 1 && common_length > best_match_length) {
                     best_match_length = common_length;
                     best_kanji_matches.clear();
                     
                     for (const auto& kanji : kanji_list) {
                         if (!matched_kanji.contains(kanji)) {
-                            best_kanji_matches.push_back(kanji);
+                            best_kanji_matches.emplace_back(kanji);
                         }
                     }
                 } else if (common_length == best_match_length && common_length >= 1) {
                     for (const auto& kanji : kanji_list) {
                         if (!matched_kanji.contains(kanji)) {
-                            best_kanji_matches.push_back(kanji);
+                            best_kanji_matches.emplace_back(kanji);
                         }
                     }
                 }
@@ -466,22 +468,21 @@ namespace KanjiUtils
                 }
                 
                 // Find the longest common prefix
-                int common_length = longestCommonPrefix(kana, key);
-                
+
                 // If we have a substantial match, and it's better than previous matches
-                if (common_length >= 3 && common_length > best_match_length) {
+                if (int common_length = longestCommonPrefix(kana, key); common_length >= 3 && common_length > best_match_length) {
                     best_match_length = common_length;
                     best_kanji_matches.clear();
                     
                     for (const auto& kanji : kanji_list) {
                         if (!matched_kanji.contains(kanji)) {
-                            best_kanji_matches.push_back(kanji);
+                            best_kanji_matches.emplace_back(kanji);
                         }
                     }
                 } else if (common_length == best_match_length && common_length >= 3) {
                     for (const auto& kanji : kanji_list) {
                         if (!matched_kanji.contains(kanji)) {
-                            best_kanji_matches.push_back(kanji);
+                            best_kanji_matches.emplace_back(kanji);
                         }
                     }
                 }
@@ -510,8 +511,7 @@ namespace KanjiUtils
                 }
 
                 // Check if this is a kanji with no or minimal non-kanji part
-                std::u32string utf32_kanji = utf8ToUtf32(kanji);
-                if (!utf32_kanji.empty() && isKanji(utf32_kanji.back())) {
+                if (std::u32string utf32_kanji = utf8ToUtf32(kanji); !utf32_kanji.empty() && isKanji(utf32_kanji.back())) {
                     // Simplified check: if lengths are compatible
                     if (isPlausibleReading(kana, kanji)) {
                         results.emplace_back(std::optional(kanji), std::optional(kana));
@@ -527,14 +527,14 @@ namespace KanjiUtils
         std::vector<std::string> remaining_kanji;
         for (const auto& kanji : kanji_entries) {
             if (!matched_kanji.contains(kanji)) {
-                remaining_kanji.push_back(kanji);
+                remaining_kanji.emplace_back(kanji);
             }
         }
         
         std::vector<std::string> remaining_kana;
         for (const auto& kana : kana_entries) {
             if (!matched_kanji.contains(kana)) {
-                remaining_kana.push_back(kana);
+                remaining_kana.emplace_back(kana);
             }
         }
         

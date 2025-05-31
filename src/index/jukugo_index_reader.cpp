@@ -1,28 +1,20 @@
-#include "yomitan_dictionary_builder/index/index_reader.h"
-#include "yomitan_dictionary_builder/utils/jptools/kana_convert.h"
+#include "yomitan_dictionary_builder/index/jukugo_index_reader.h"
+#include "yomitan_dictionary_builder/utils/jptools/kanji_utils.h"
 
-#include <filesystem>
 #include <iostream>
+#include <filesystem>
 #include <fstream>
 
-IndexReader::IndexReader(const std::string_view indexPath) : indexPath(indexPath)
+JukugoIndexReader::JukugoIndexReader(const std::string_view indexPath) : indexPath(indexPath)
 {
-    if (!IndexReader::loadIndex())
+    if (!loadIndex())
     {
         std::cerr << "Failed to load index at: " << indexPath << std::endl;
     }
 }
 
-const std::vector<std::string>& IndexReader::getKeysForFile(const std::string_view filename)
-{
-    if (const auto iter = fileToKeys.find(std::string(filename)); iter != fileToKeys.end())
-    {
-        return iter->second;
-    }
-    return emptyVector;
-}
 
-bool IndexReader::loadIndex()
+bool JukugoIndexReader::loadIndex()
 {
     try
     {
@@ -32,7 +24,7 @@ bool IndexReader::loadIndex()
             return false;
         }
 
-        fileToKeys.clear();
+        groupedEntries.clear();
 
         std::ifstream indexFile(indexPath);
         if (!indexFile.is_open())
@@ -64,20 +56,28 @@ bool IndexReader::loadIndex()
                 continue;
             }
 
-            std::string key = parts[0];
-            std::vector<std::string> pageNumbers;
-
-            for (size_t i = 1; i < parts.size(); ++i)
+            const std::string& key = parts[0];
+            try
             {
-                if (std::string pageNumber = parts[i]; !pageNumber.empty())
+                for (size_t i = 1; i < parts.size(); ++i)
                 {
-                    pageNumbers.emplace_back(pageNumber);
+                    if (const std::string& pageNumber = parts[i]; !pageNumber.empty())
+                    {
+                        constexpr size_t item_start = 0;
+                        const size_t item_end = pageNumber.find('-');
 
-                    // Build reverse mapping
-                    fileToKeys[pageNumber].emplace_back(key);
+                        int pageID = std::stoi(pageNumber.substr(item_start, item_end - item_start));
+                        int itemID = std::stoi(pageNumber.substr(item_end + 1));
+
+                        groupedEntries[pageID][itemID].emplace_back(key);
+                    }
                 }
+                lineCount++;
             }
-            lineCount++;
+            catch (std::exception& e)
+            {
+                std::cerr << "Invalid line: " << line << " - " << e.what() << std::endl;
+            }
         }
 
         return true;
@@ -94,4 +94,14 @@ bool IndexReader::loadIndex()
     }
 }
 
+
+const std::unordered_map<int, std::vector<std::string>>& JukugoIndexReader::getGroupedEntriesForPage(const int page)
+{
+    if (const auto it = groupedEntries.find(page); it != groupedEntries.end())
+    {
+        return it->second;
+    }
+    static const std::unordered_map<int, std::vector<std::string>> emptyMap;
+    return emptyMap;
+}
 
