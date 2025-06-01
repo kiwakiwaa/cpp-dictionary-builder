@@ -78,6 +78,7 @@ dictionaries:
 
 #### Parser architecture
 ```text
+BaseParser
 ├── XMLParser
     ├── YomitanParser (Yomitan-specific processing)
     └── MdictParser (MDict format processing)
