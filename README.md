@@ -174,7 +174,7 @@ make
 
 </details>
 
-<details>
+<details open>
 
 <summary>使い方</summary>
 
