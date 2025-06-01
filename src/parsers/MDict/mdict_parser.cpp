@@ -7,7 +7,7 @@
 #include "yomitan_dictionary_builder/strategies/key/key_extraction_strategy.h"
 
 
-MdictParser::MdictParser(const ParserConfig &config, const MDictConfig& dictionaryConfig) : XMLParser(config), dictionaryConfig(dictionaryConfig)
+MdictParser::MdictParser(const ParserConfig& config, const MDictConfig& dictionaryConfig) : XMLParser(config), dictionaryConfig(dictionaryConfig)
 {
     this->jukugoIndexReader = std::make_unique<JukugoIndexReader>(
         (config.indexPath.value().parent_path() / "jyukugo_prefix.tsv").string());
@@ -91,7 +91,9 @@ int MdictParser::processFile(const std::filesystem::path &filePath)
 
     auto jukugoKeys = jukugoIndexReader->getGroupedEntriesForPage(pageID);
 
-    const int subItemsProcessed = subItemProcessor->processSubItems(doc, jukugoKeys, pageID, *exporter);
+    int subItemsProcessed{0};
+    if (!dictionaryConfig.subElement.empty())
+        subItemsProcessed = subItemProcessor->processSubItems(doc, jukugoKeys, pageID, *exporter);
 
     // Remove the subitem section
     for (auto subItemGNode : doc.select_nodes("//SubItemG"))

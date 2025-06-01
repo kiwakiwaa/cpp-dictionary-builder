@@ -3,17 +3,6 @@ general:
   showProgress: true
   parsingBatchSize: 250
 dictionaries:
-  YDP:
-    YomitanDictionaryConfig:
-      title: "有斐閣現代心理学辞典"
-      url: "https://www.monokakido.jp/en/dictionaries/ydp/index.html"
-      description: "「有斐閣 現代心理学辞典」は、新しい公認心理師時代に必須の心理学辞典です。基礎〜応用まで全領域を網羅し、最新動向もおさえ、簡潔・平易な解説と、充実の「見よ項目」・関連項目・索引リストが、初学者〜実務家まで幅広い学習者の系統的・有機的な学びをサポートします。さらに電子版には、図版（フルカラー）や動画など、書籍版に未掲載の資料（約90点）が追加されています。"
-      attribution: "© 2021 MONOKAKIDO Co., Ltd."
-      chunk_size: 1000
-    ParserConfig:
-      dictionaryPath: "resources/parsers/YDP/pages"
-      indexPath: "resources/parsers/YDP/index/index_d.tsv"
-
   RGKA9:
     MDictConfig:
       title: "例解学習漢字辞典［第九版］"
@@ -56,3 +45,16 @@ dictionaries:
       cssDirectory: "resources/parsers/NHKACCENT2/style"
       iconPath: "resources/parsers/NHKACCENT2/NHK日本語発音アクセント新辞典.png"
       outputPath: "converted/NHK日本語発音アクセント新辞典"
+
+  YDP:
+    MDictConfig:
+      title: "有斐閣現代心理学辞典"
+      appendixLinkIdentifier: "appendix/"
+    ParserConfig:
+      dictionaryPath: "resources/parsers/YDP/pages"
+      descriptionPath: "resources/parsers/YDP/description.html"
+      indexPath: "resources/parsers/YDP/index/index_d.tsv"
+      assetDirectory: "resources/parsers/YDP/assets"
+      cssDirectory: "resources/parsers/YDP/style"
+      iconPath: "resources/parsers/YDP/有斐閣現代心理学辞典.png"
+      outputPath: "converted/有斐閣現代心理学辞典"

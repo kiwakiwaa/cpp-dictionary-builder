@@ -40,7 +40,7 @@ int main()
     }
     std::cout << std::endl;
 
-    const std::string targetDictionary = "KJT";
+    const std::string targetDictionary = "YDP";
     const auto config = configLoader.getDictionaryConfig(targetDictionary);
 
     const auto parser = std::make_unique<MdictParser>(config.parserConfig, config.mDictConfig);
