@@ -1,28 +1,44 @@
 #ifndef IMAGE_HANDLING_STRATEGY_H
 #define IMAGE_HANDLING_STRATEGY_H
 
-#include "yomitan_dictionary_builder/core/dictionary/html_element.h"
+#include "pugixml.h"
+
+#include <optional>
 
 class ImageHandlingStrategy
 {
 public:
+    ImageHandlingStrategy() = default;
     virtual ~ImageHandlingStrategy() = default;
 
-    virtual std::shared_ptr<HTMLElement> handleImageElement(
-        const pugi::xml_node& element,
-        std::string_view targetTag,
-        const std::unordered_map<std::string, std::string>& dataAttributes,
-        const std::vector<std::string>& classList
-    ) = 0;
+    /**
+     * Traverses the whole XML document and processes any image elments' source paths
+     *
+     * @param xmlDoc XML document
+     */
+    void processAllImageElements(const pugi::xml_document& xmlDoc) const;
+
+
+protected:
+
+    /**
+     * Processes a single image element
+     *
+     * @param xmlNode XML document
+     */
+    virtual void processImageElement(const pugi::xml_node& xmlNode) const = 0;
+
+
+    /**
+     * Gets the image path from the src attribute of an XML element, e.g 'graphics/filename.png'
+     *
+     * @param xmlNode the XML node
+     * @return Image file path
+     */
+    static std::optional<std::filesystem::path> getImagePath(const pugi::xml_node& xmlNode);
+
 };
 
-class DefaultImageHandlingStrategy final : public ImageHandlingStrategy
-{
-    std::shared_ptr<HTMLElement> handleImageElement(
-        const pugi::xml_node &element, std::string_view targetTag,
-        const std::unordered_map<std::string, std::string> &dataAttributes,
-        const std::vector<std::string> &classList
-        ) override;
-};
+// TODO: add default handler
 
 #endif

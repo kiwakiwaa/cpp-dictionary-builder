@@ -13,10 +13,11 @@ MdictParser::MdictParser(const ParserConfig& config, const MDictConfig& dictiona
         (config.indexPath.value().parent_path() / "jyukugo_prefix.tsv").string());
 
     // Create strategies
-    keyExtractionStrategy = config.createKeyExtractionStrategy();
-    linkHandlingStrategy = config.createMDictLinkStrategy(dictionaryConfig);
+    this->keyExtractionStrategy = config.createKeyExtractionStrategy();
+    this->linkHandlingStrategy = config.createMDictLinkStrategy(dictionaryConfig);
+    this->imageHandlingStrategy = config.createImageStrategy();
 
-    subItemProcessor = std::make_unique<SubItemProcessor>(dictionaryConfig);
+    this->subItemProcessor = std::make_unique<SubItemProcessor>(dictionaryConfig);
 }
 
 
@@ -47,6 +48,9 @@ void MdictParser::finalizeProcessing()
 
         if (config.cssDirectory.has_value())
             assetConfig.cssDirectory = config.cssDirectory.value();
+
+        if (config.fontDirectory.has_value())
+            assetConfig.fontDirectory = config.fontDirectory.value();
 
         if (config.iconPath.has_value())
             assetConfig.iconPath = config.iconPath.value();
@@ -82,6 +86,8 @@ int MdictParser::processFile(const std::filesystem::path &filePath)
 
     // fix all link elements e.g ensure "entry://...", "sound://..."
     processAllLinkElements(doc);
+    if (this->imageHandlingStrategy)
+        this->imageHandlingStrategy->processAllImageElements(doc);
 
     auto headEntryKeys = indexReader->getKeysForFile(filePath.stem().string());
 
@@ -96,9 +102,11 @@ int MdictParser::processFile(const std::filesystem::path &filePath)
         subItemsProcessed = subItemProcessor->processSubItems(doc, jukugoKeys, pageID, *exporter);
 
     // Remove the subitem section
-    for (auto subItemGNode : doc.select_nodes("//SubItemG"))
+    for (const auto subItemSelector = dictionaryConfig.subElement.empty() ? "SubItemG" : dictionaryConfig.subElement.c_str();
+         auto subItemGNode : doc.select_nodes((std::string("//") + subItemSelector).c_str()))
+    {
         subItemGNode.node().parent().remove_child(subItemGNode.node());
-
+    }
 
     const std::string xmlContent = getXMLContent(doc);
     if (xmlContent.empty())
@@ -161,16 +169,10 @@ void MdictParser::processAllLinkElements(const pugi::xml_document& xmlDoc) const
                 }
 
                 const std::string newHref = linkHandlingStrategy->getNewHref(href);
-                if (newHref.empty())
-                {
-                    processedNodes.insert(node);
-                    continue;
-                }
-
                 if (tagName == "a")
                 {
                     // Direct href replacement for <a> tags
-                    hrefAttr.set_value(newHref.c_str());
+                    newHref.empty() ? node.set_name("span") : hrefAttr.set_value(newHref.c_str());
                 }
                 else if (!newHref.empty())
                 {

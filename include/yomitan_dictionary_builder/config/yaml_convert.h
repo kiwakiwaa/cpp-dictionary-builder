@@ -61,6 +61,7 @@ struct YAML::convert<ParserConfig>
         // Paths
         if (node["dictionaryPath"]) config.dictionaryPath = node["dictionaryPath"].as<std::string>();
         if (node["tagMappingPath"]) config.tagMappingPath = node["tagMappingPath"].as<std::string>();
+        if (node["imageMappingPath"]) config.imageMappingPath = node["imageMappingPath"].as<std::string>();
         if (node["indexPath"]) config.indexPath = node["indexPath"].as<std::string>();
         if (node["jmdictPath"]) config.jmdictPath = node["jmdictPath"].as<std::string>();
         if (node["audioPath"]) config.audioPath = node["audioPath"].as<std::string>();

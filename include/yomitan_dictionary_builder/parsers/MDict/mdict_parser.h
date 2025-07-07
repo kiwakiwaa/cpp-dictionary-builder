@@ -3,7 +3,8 @@
 
 #include "yomitan_dictionary_builder/core/xml_parser.h"
 #include "yomitan_dictionary_builder/index/jukugo_index_reader.h"
-#include "../../strategies/link/mdict_link_handling_strategy.h"
+#include "yomitan_dictionary_builder/strategies/link/mdict_link_handling_strategy.h"
+#include "yomitan_dictionary_builder/strategies/image/image_handling_strategy.h"
 #include "yomitan_dictionary_builder/parsers/MDict/mdict_config.h"
 #include "yomitan_dictionary_builder/parsers/MDict/subitem_processor.h"
 #include "yomitan_dictionary_builder/parsers/MDict/mdict_exporter.h"
@@ -28,7 +29,6 @@ private:
      * Traverses the whole XML document and fixes link elements so that
      * they work in the converted MDict by adding entry://href_value
      * @param xmlDoc XML document
-     * @return Processed XML document
      */
     void processAllLinkElements(const pugi::xml_document& xmlDoc) const;
 
@@ -57,6 +57,7 @@ private:
 
     std::unique_ptr<KeyExtractionStrategy> keyExtractionStrategy;
     std::unique_ptr<MDictLinkHandlingStrategy> linkHandlingStrategy;
+    std::unique_ptr<ImageHandlingStrategy> imageHandlingStrategy;
 
     std::unique_ptr<SubItemProcessor> subItemProcessor;
     std::unique_ptr<MDictExporter> exporter;

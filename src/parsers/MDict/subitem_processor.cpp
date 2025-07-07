@@ -12,7 +12,7 @@ SubItemProcessor::SubItemProcessor(MDictConfig  dictionaryConfig) : dictionaryCo
 }
 
 
-int SubItemProcessor::processSubItems(const pugi::xml_document& xmlDoc, std::unordered_map<int, std::vector<std::string>>& keys, int pageId, MDictExporter& exporter)
+int SubItemProcessor::processSubItems(const pugi::xml_document& xmlDoc, std::unordered_map<int, std::vector<std::string>>& keys, const int pageId, MDictExporter& mdictExporter)
 {
     int processedCount = 0;
 
@@ -31,7 +31,7 @@ int SubItemProcessor::processSubItems(const pugi::xml_document& xmlDoc, std::uno
             // Check if we have keys for this item ID
             if (!keys.contains(itemIdVal))
             {
-                std::cerr << "No jukugo keys found for item ID: " << itemId << std::endl;
+                std::cerr << "No jukugo keys found for item ID: " << itemId << " in page: " << std::to_string(pageId) << std::endl;
                 continue;
             }
 
@@ -41,13 +41,13 @@ int SubItemProcessor::processSubItems(const pugi::xml_document& xmlDoc, std::uno
             const std::string wrappedContent = wrapContent(subItemNode.node());
 
             // Create combined entry ID: pageID + itemID
-            const int entryId = std::stoi(std::to_string(80) + std::to_string(pageId) + itemId);
+            const long entryId = std::stol(std::to_string(80) + std::to_string(pageId) + itemId);
 
             // Get keys for this item
             const std::vector<std::string>& itemKeys = keys[itemIdVal];
 
             MDictEntry entry(entryId, itemKeys, wrappedContent);
-            exporter.addEntry(entry);
+            mdictExporter.addEntry(entry);
 
             processedCount++;
         }

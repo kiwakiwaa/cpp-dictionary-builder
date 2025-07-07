@@ -24,6 +24,11 @@ void AssetManager::copyAssets(const AssetConfig& config)
         copyDirectory(config.assetDirectory, true);
     }
 
+    if (!config.fontDirectory.empty())
+    {
+        copyDirectory(config.fontDirectory, false);
+    }
+
     if (!config.cssDirectory.empty())
     {
         copyDirectory(config.cssDirectory, false);

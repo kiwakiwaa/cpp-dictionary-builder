@@ -12,11 +12,17 @@
 #include <unordered_map>
 #include <functional>
 #include <stdexcept>
+#include <optional>
 
 class LinkHandlingStrategy;
 class MDictLinkHandlingStrategy;
 class ImageHandlingStrategy;
 class KeyExtractionStrategy;
+
+struct ImageStrategyParams
+{
+    std::optional<std::string> imageMapPath;
+};
 
 template<typename T, typename... Args>
 class StrategyFactory
@@ -64,6 +70,7 @@ private:
 using LinkStrategyFactory = StrategyFactory<LinkHandlingStrategy>;
 using MDictLinkStrategyFactory = StrategyFactory<MDictLinkHandlingStrategy, const MDictConfig&>;
 using KeyExtractionStrategyFactory = StrategyFactory<KeyExtractionStrategy>;
+using ImageStrategyFactory = StrategyFactory<ImageHandlingStrategy, const ImageStrategyParams&>;
 
 void registerAllStrategies();
 

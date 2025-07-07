@@ -38,6 +38,7 @@ FetchContent_MakeAvailable(yaml-cpp)
 file(GLOB_RECURSE parser_headers "include/yomitan_dictionary_builder/parsers/*/*.h")
 file(GLOB_RECURSE parser_sources "src/parsers/*/*.cpp")
 
+
 add_library(yomitan_dictionary_builder_lib STATIC
         ${parser_sources}
         src/config/config_loader.cpp
@@ -52,8 +53,11 @@ add_library(yomitan_dictionary_builder_lib STATIC
         src/utils/jptools/kana_convert.cpp
         src/index/index_reader.cpp
         src/index/jukugo_index_reader.cpp
-        src/strategies/key/mdict_link_handling_strategy.cpp
+        src/strategies/link/mdict_link_handling_strategy.cpp
+        src/strategies/link/nds_link_extraction_strategy.cpp
         src/strategies/key/kjt_extraction_strategy.cpp
+        src/strategies/image/image_handling_strategy.cpp
+        src/strategies/image/hashed_image_strategy.cpp
         src/config/strategy_factory.cpp
         src/parsers/MDict/subitem_processor.cpp
         src/parsers/MDict/mdict_exporter.cpp

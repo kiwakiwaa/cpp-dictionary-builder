@@ -58,3 +58,19 @@ dictionaries:
       cssDirectory: "resources/parsers/YDP/style"
       iconPath: "resources/parsers/YDP/有斐閣現代心理学辞典.png"
       outputPath: "converted/有斐閣現代心理学辞典"
+
+  NDS:
+    MDictConfig:
+      title: "精選版 日本国語大辞典"
+      subElement: "KoKomoku"
+    ParserConfig:
+      dictionaryPath: "resources/parsers/NDS/pages"
+      imageMappingPath: "resources/parsers/NDS/image_map.json"
+      descriptionPath: "resources/parsers/NDS/description.html"
+      indexPath: "resources/parsers/NDS/index/index_d.tsv"
+      assetDirectory: "resources/parsers/NDS/assets"
+      fontDirectory: "resources/parsers/NDS/fonts"
+      cssDirectory: "resources/parsers/NDS/style"
+      iconPath: "resources/parsers/NDS/精選版 日本国語大辞典.png"
+      outputPath: "converted/精選版 日本国語大辞典"
+      mDictLinkStrategyType: "nds"

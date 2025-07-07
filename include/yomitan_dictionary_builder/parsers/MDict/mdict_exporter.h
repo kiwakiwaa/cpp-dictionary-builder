@@ -10,11 +10,11 @@
 
 struct MDictEntry
 {
-    int pageId;
+    long pageId;
     std::vector<std::string> keys;
     std::string content;
 
-    MDictEntry(const int id, std::vector<std::string> k, std::string c)
+    MDictEntry(const long id, std::vector<std::string> k, std::string c)
         : pageId(id), keys(std::move(k)), content(std::move(c)) {}
 };
 

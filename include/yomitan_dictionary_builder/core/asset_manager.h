@@ -7,6 +7,7 @@ struct AssetConfig
 {
     std::filesystem::path cssDirectory;
     std::filesystem::path assetDirectory;
+    std::filesystem::path fontDirectory;
     std::filesystem::path iconPath;
     bool prserveDirectoryStructure = true;
     bool overwriteExisting = true;

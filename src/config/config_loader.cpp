@@ -153,7 +153,7 @@ ParserConfig ConfigLoader::parseParserConfig(const YAML::Node& node) const
 
     if (node["keyExtractionStrategy"])
     {
-        const std::string strategyType = node["keyExtractionStrategy"].as<std::string>();
+        const auto strategyType = node["keyExtractionStrategy"].as<std::string>();
         config.createKeyExtractionStrategy = [strategyType]() {
             return KeyExtractionStrategyFactory::getInstance().create(strategyType);
         };
@@ -174,9 +174,18 @@ ParserConfig ConfigLoader::parseParserConfig(const YAML::Node& node) const
     if (node["appendixPath"]) config.appendixPath = resolvePath(node["appendixPath"].as<std::string>());
     if (node["outputPath"]) config.outputPath = resolvePath(node["outputPath"].as<std::string>());
     if (node["assetDirectory"]) config.assetDirectory = resolvePath(node["assetDirectory"].as<std::string>());
+    if (node["fontDirectory"]) config.fontDirectory = resolvePath(node["fontDirectory"].as<std::string>());
     if (node["cssDirectory"]) config.cssDirectory = resolvePath(node["cssDirectory"].as<std::string>());
     if (node["descriptionPath"]) config.descriptionPath = resolvePath(node["descriptionPath"].as<std::string>());
     if (node["iconPath"]) config.iconPath = resolvePath(node["iconPath"].as<std::string>());
+    if (node["imageMappingPath"])
+    {
+        const auto imageMappingPath = resolvePath(node["imageMappingPath"].as<std::string>());
+        config.imageMappingPath = imageMappingPath;
+        config.createImageStrategy = [imageMappingPath]() {
+              return ImageStrategyFactory::getInstance().create("hash", ImageStrategyParams{.imageMapPath = imageMappingPath});
+        };
+    }
 
     // Optional features
     if (node["ignoredElements"])

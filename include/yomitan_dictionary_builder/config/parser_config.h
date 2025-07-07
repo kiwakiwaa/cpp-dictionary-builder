@@ -27,12 +27,14 @@ struct ParserConfig
     // Paths
     std::filesystem::path dictionaryPath;
     std::optional<std::filesystem::path> tagMappingPath;
+    std::optional<std::filesystem::path> imageMappingPath;
     std::optional<std::filesystem::path> indexPath;
     std::optional<std::filesystem::path> jmdictPath;
     std::optional<std::filesystem::path> audioPath;
     std::optional<std::filesystem::path> appendixPath;
     std::optional<std::filesystem::path> outputPath;
     std::optional<std::filesystem::path> assetDirectory;
+    std::optional<std::filesystem::path> fontDirectory;
     std::optional<std::filesystem::path> cssDirectory;
     std::optional<std::filesystem::path> descriptionPath;
     std::optional<std::filesystem::path> iconPath;
